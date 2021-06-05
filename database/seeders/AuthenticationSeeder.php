@@ -1,0 +1,799 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\App\Catalogue;
+use App\Models\App\Institution;
+use App\Models\App\Professional;
+use App\Models\App\Status;
+use App\Models\Authentication\Module;
+use App\Models\Authentication\Permission;
+use App\Models\Authentication\Role;
+use App\Models\Authentication\Route;
+use App\Models\Authentication\SecurityQuestion;
+use App\Models\Authentication\System;
+use App\Models\Authentication\User;
+use Illuminate\Database\Seeder;
+
+class AuthenticationSeeder extends Seeder
+{
+    public function run()
+    {
+        $this->createStatus();
+
+        // catalogos
+        $this->createIdentificationTypeCatalogues();
+        $this->createEthnicOriginCatalogues();
+        $this->createBloodTypeCatalogues();
+        $this->createSexCatalogues();
+        $this->createGenderCatalogues();
+        $this->createCivilStatusCatalogues();
+        $this->createMenus();
+        $this->createSectorTypeCatalogues();
+        $this->createDocumentCatalogues();
+        $this->createConstancyCatalogues();
+        $this->createCertificateCatalogues();
+        $this->createReCertificateCatalogues();
+        $this->createConferenceCatalogues();
+        $this->createReConferenceCatalogues();
+
+        // Sistemas
+        $this->createSystem();
+
+        // Institutos
+        $this->createInstitutions();
+
+        // Roles para el sistema IGNUG
+        $this->createRoles();
+
+        // Modulos
+        $this->createModules();
+
+        // Rutas
+        $this->createRoutes();
+
+        // Permisos
+        $this->createPermissions();
+
+        // Roles con permisos
+        $this->createRolePermissions();
+
+        // Users
+        $this->createUsers();
+
+        // Users
+        $this->createProfessionals();
+
+        // Users con roles
+        $this->createUsersRoles();
+
+        // Users con instituciones
+        $this->createUsersInstitutions();
+
+        // Security Questions
+        $this->createSecurityQuestions();
+    }
+
+    private function createSystem()
+    {
+        $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
+        $statysAvailable = Status::firstWhere('code', $catalogues['status']['available']);
+        System::factory()->create([
+            'code' => $catalogues['system']['code'],
+            'name' => 'Sistema de Cirugía y Traumatología Bucomaxilofacial',
+            'acronym' => 'BLACIBU',
+            'version' => '1.2.3',
+            'redirect' => 'http://localhost:4200',
+            'date' => '2021-03-10',
+            'status_id' => $statysAvailable->id
+        ]);
+    }
+
+    private function createStatus()
+    {
+        $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
+
+        Status::factory()->create([
+            'code' => $catalogues['status']['active'],
+            'name' => 'ACTIVE',
+        ]);
+        Status::factory()->create([
+            'code' => $catalogues['status']['inactive'],
+            'name' => 'INACTIVE',
+        ]);
+        Status::factory()->create([
+            'code' => $catalogues['status']['locked'],
+            'name' => 'LOCKED',
+        ]);
+        Status::factory()->create([
+            'code' => $catalogues['status']['available'],
+            'name' => 'AVAILABLE',
+        ]);
+        Status::factory()->create([
+            'code' => $catalogues['status']['maintenance'],
+            'name' => 'MAINTENANCE',
+        ]);
+        Status::factory()->create([
+            'code' => $catalogues['status']['accepted'],
+            'name' => 'ACEPTADO',
+        ]);
+        Status::factory()->create([
+            'code' => $catalogues['status']['rejected'],
+            'name' => 'RECHAZADO',
+        ]);
+        Status::factory()->create([
+            'code' => $catalogues['status']['in_progress'],
+            'name' => 'EN REVISIÓN',
+        ]);
+    }
+
+    private function createRoles()
+    {
+        $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
+        $institution = Institution::find(1);
+        foreach (System::all() as $system) {
+            Role::factory()->create([
+                'code' => $catalogues['role']['admin'],
+                'name' => 'ADMINISTRADOR',
+                'system_id' => $system->id
+            ]);
+
+            Role::factory()->create([
+                'code' => $catalogues['role']['certified'],
+                'name' => 'CERTIFICADO',
+                'system_id' => $system->id
+            ]);
+
+            Role::factory()->create([
+                'code' => $catalogues['role']['recertified'],
+                'name' => 'RE-CERTIFICADO',
+                'system_id' => $system->id
+            ]);
+        }
+    }
+
+    private function createPermissions()
+    {
+        $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
+        $system = System::firstWhere('code', $catalogues['system']['code']);
+        foreach (Route::all() as $route) {
+            Permission::factory()->create([
+                'route_id' => $route->id,
+                'system_id' => $system->id,
+            ]);
+        }
+    }
+
+    private function createRolePermissions()
+    {
+        $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
+        $system = System::firstWhere('code', $catalogues['system']['code']);
+
+        $roleAdmin = Role::find(1);
+        for ($i = 1; $i <= 2; $i++) {
+            $roleAdmin->permissions()->attach(Permission::
+            where('route_id', $i)
+                ->where('system_id', $system->id)
+                ->first()
+            );
+        }
+
+        $roleCerticate = Role::find(2);
+        for ($i = 3; $i <= 7; $i++) {
+            $roleCerticate->permissions()->attach(Permission::
+            where('route_id', $i)
+                ->where('system_id', $system->id)
+                ->first()
+            );
+        }
+
+        $roleReCerticate = Role::find(3);
+        for ($i = 8; $i <= 10; $i++) {
+            $roleReCerticate->permissions()->attach(Permission::
+            where('route_id', $i)
+                ->where('system_id', $system->id)
+                ->first()
+            );
+        }
+    }
+
+    private function createInstitutions()
+    {
+        Institution::factory()->create(
+            [
+                'code' => 'bj_1',
+                'name' => 'BENITO JUAREZ',
+                'logo' => 'institutions/1.png',
+                'acronym' => 'BJ',
+                'short_name' => 'BENITO JUAREZ'
+            ]);
+        Institution::factory()->create(
+            [
+                'code' => 'y_2',
+                'name' => 'DE TURISMO Y PATRIMONIO YAVIRAC',
+                'logo' => 'institutions/2.png',
+                'acronym' => 'Y',
+                'short_name' => 'YAVIRAC'
+            ]);
+        Institution::factory()->create(
+            [
+                'code' => '24mayo_3',
+                'name' => '24 DE MAYO',
+                'logo' => 'institutions/3.png',
+                'acronym' => '24MAYO',
+                'short_name' => '24 DE MAYO'
+            ]);
+        Institution::factory()->create(
+            [
+                'code' => 'gc_4',
+                'name' => 'GRAN COLOMBIA',
+                'logo' => 'institutions/4.png',
+                'acronym' => 'GC',
+                'short_name' => 'GRAN COLOMBIA'
+            ]);
+    }
+
+    private function createEthnicOriginCatalogues()
+    {
+        $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
+        Catalogue::factory()->create([
+            'code' => $catalogues['catalogue']['ethnic_origin']['indigena'],
+            'name' => 'INDIGENA',
+            'type' => $catalogues['catalogue']['ethnic_origin']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => $catalogues['catalogue']['ethnic_origin']['afroecuatoriano'],
+            'name' => 'AFROECUATORIANO',
+            'type' => $catalogues['catalogue']['ethnic_origin']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => $catalogues['catalogue']['ethnic_origin']['negro'],
+            'name' => 'NEGRO',
+            'type' => $catalogues['catalogue']['ethnic_origin']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => $catalogues['catalogue']['ethnic_origin']['mulato'],
+            'name' => 'MULATO',
+            'type' => $catalogues['catalogue']['ethnic_origin']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => $catalogues['catalogue']['ethnic_origin']['montuvio'],
+            'name' => 'MONTUVIO',
+            'type' => $catalogues['catalogue']['ethnic_origin']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => $catalogues['catalogue']['ethnic_origin']['mestizo'],
+            'name' => 'MESTIZO',
+            'type' => $catalogues['catalogue']['ethnic_origin']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => $catalogues['catalogue']['ethnic_origin']['blanco'],
+            'name' => 'BLANCO',
+            'type' => $catalogues['catalogue']['ethnic_origin']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => $catalogues['catalogue']['ethnic_origin']['other'],
+            'name' => 'OTRO',
+            'type' => $catalogues['catalogue']['ethnic_origin']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => $catalogues['catalogue']['ethnic_origin']['unregistered'],
+            'name' => 'NO REGISTRA',
+            'type' => $catalogues['catalogue']['ethnic_origin']['type'],
+        ]);
+    }
+
+    private function createIdentificationTypeCatalogues()
+    {
+        $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
+        Catalogue::factory()->create([
+            'code' => $catalogues['catalogue']['identification_type']['cc'],
+            'name' => 'CEDULA',
+            'type' => $catalogues['catalogue']['identification_type']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => $catalogues['catalogue']['identification_type']['passport'],
+            'name' => 'PASAPORTE',
+            'type' => $catalogues['catalogue']['identification_type']['type'],
+        ]);
+    }
+
+    private function createBloodTypeCatalogues()
+    {
+        $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
+        Catalogue::factory()->create([
+            'code' => $catalogues['catalogue']['blood_type']['a-'],
+            'name' => 'A-',
+            'type' => $catalogues['catalogue']['blood_type']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => $catalogues['catalogue']['blood_type']['a+'],
+            'name' => 'A+',
+            'type' => $catalogues['catalogue']['blood_type']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => $catalogues['catalogue']['blood_type']['b-'],
+            'name' => 'B-',
+            'type' => $catalogues['catalogue']['blood_type']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => $catalogues['catalogue']['blood_type']['b+'],
+            'name' => 'B+',
+            'type' => $catalogues['catalogue']['blood_type']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => $catalogues['catalogue']['blood_type']['ab-'],
+            'name' => 'AB-',
+            'type' => $catalogues['catalogue']['blood_type']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => $catalogues['catalogue']['blood_type']['ab+'],
+            'name' => 'AB+',
+            'type' => $catalogues['catalogue']['blood_type']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => $catalogues['catalogue']['blood_type']['o-'],
+            'name' => 'O-',
+            'type' => $catalogues['catalogue']['blood_type']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => $catalogues['catalogue']['blood_type']['o+'],
+            'name' => 'O+',
+            'type' => $catalogues['catalogue']['blood_type']['type'],
+        ]);
+    }
+
+    private function createSexCatalogues()
+    {
+        $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
+        Catalogue::factory()->create([
+            'code' => $catalogues['catalogue']['sex']['male'],
+            'name' => 'HOMBRE',
+            'type' => $catalogues['catalogue']['sex']['type']
+        ]);
+        Catalogue::factory()->create([
+            'code' => $catalogues['catalogue']['sex']['female'],
+            'name' => 'MUJER',
+            'type' => $catalogues['catalogue']['sex']['type'],
+        ]);
+    }
+
+    private function createGenderCatalogues()
+    {
+        $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
+        Catalogue::factory()->create([
+            'code' => $catalogues['catalogue']['gender']['male'],
+            'name' => 'MASCULINO',
+            'type' => $catalogues['catalogue']['gender']['type']
+        ]);
+        Catalogue::factory()->create([
+            'code' => $catalogues['catalogue']['gender']['female'],
+            'name' => 'FEMENINO',
+            'type' => $catalogues['catalogue']['gender']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => $catalogues['catalogue']['gender']['other'],
+            'name' => 'OTRO',
+            'type' => $catalogues['catalogue']['gender']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => $catalogues['catalogue']['gender']['not_say'],
+            'name' => 'PREFIERO NO DECIRLO',
+            'type' => $catalogues['catalogue']['gender']['type'],
+        ]);
+    }
+
+    private function createCivilStatusCatalogues()
+    {
+        $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
+        Catalogue::factory()->create([
+            'code' => $catalogues['catalogue']['civil_status']['married'],
+            'name' => 'CASADO/A',
+            'type' => $catalogues['catalogue']['civil_status']['type']
+        ]);
+        Catalogue::factory()->create([
+            'code' => $catalogues['catalogue']['civil_status']['single'],
+            'name' => 'SOLTERO/A',
+            'type' => $catalogues['catalogue']['civil_status']['type']
+        ]);
+        Catalogue::factory()->create([
+            'code' => $catalogues['catalogue']['civil_status']['widower'],
+            'name' => 'VIUDO/A',
+            'type' => $catalogues['catalogue']['civil_status']['type']
+        ]);
+        Catalogue::factory()->create([
+            'code' => $catalogues['catalogue']['civil_status']['divorced'],
+            'name' => 'DIVORCIADO/A',
+            'type' => $catalogues['catalogue']['civil_status']['type']
+        ]);
+        Catalogue::factory()->create([
+            'code' => $catalogues['catalogue']['civil_status']['union'],
+            'name' => 'UNIÓN DE HECHO',
+            'type' => $catalogues['catalogue']['civil_status']['type']
+        ]);
+    }
+
+    private function createSectorTypeCatalogues()
+    {
+        $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
+        Catalogue::factory()->create([
+            'name' => 'NORTE',
+            'type' => $catalogues['catalogue']['sector']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'name' => 'CENTRO',
+            'type' => $catalogues['catalogue']['sector']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'name' => 'SUR',
+            'type' => $catalogues['catalogue']['sector']['type'],
+        ]);
+    }
+
+    private function createDocumentCatalogues()
+    {
+        $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
+        Catalogue::factory()->create([
+            'code' => '1',
+            'name' => 'Título universitario de odontólogo.',
+            'type' => $catalogues['catalogue']['document']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => '2',
+            'name' => 'Cédula, matrícula o colegiatura oficial de odontólogo.',
+            'type' => $catalogues['catalogue']['document']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => '3',
+            'name' => 'Título de especialista en cirugía bucomaxilofacial.',
+            'type' => $catalogues['catalogue']['document']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => '4',
+            'name' => 'Cédula o matrícula oficial en cirugía bucomaxilofacial.',
+            'type' => $catalogues['catalogue']['document']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => '5',
+            'name' => 'Cédula o matrícula oficial en cirugía bucomaxilofacial.',
+            'type' => $catalogues['catalogue']['document']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => '6',
+            'name' => 'Constancia de miembro activo de su sociedad o asociación.',
+            'type' => $catalogues['catalogue']['document']['type'],
+        ]);
+    }
+
+    private function createConstancyCatalogues()
+    {
+        $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
+        Catalogue::factory()->create([
+            'code' => '1',
+            'name' => 'Constancia de miembro activo expedida por la Sociedad, Asociación o Entidad Nacional de su país.',
+            'type' => $catalogues['catalogue']['constancy']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => '2',
+            'name' => 'Curriculum vitae (antecedentes últimos 6 años).',
+            'type' => $catalogues['catalogue']['constancy']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => '3',
+            'name' => 'Constancia de práctica privada exclusiva de la especialidad representada en número de años.',
+            'type' => $catalogues['catalogue']['constancy']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => '4',
+            'name' => 'Distinciones, premios y reconocimientos especiales en la especialidad.',
+            'type' => $catalogues['catalogue']['constancy']['type'],
+        ]);
+    }
+
+    private function createCertificateCatalogues()
+    {
+        $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
+        Catalogue::factory()->create([
+            'code' => '1',
+            'name' => 'Certificados de asistencia cursos y congresos afines a la especialidad avalados por Alacibu.',
+            'type' => $catalogues['catalogue']['certificate']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => '2',
+            'name' => 'Certificados de asistencia cursos y congresos afines a la especialidad no avalados por Alacibu.',
+            'type' => $catalogues['catalogue']['certificate']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => '3',
+            'name' => 'Certificados o diplomas de actividades académicas.',
+            'type' => $catalogues['catalogue']['certificate']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => '4',
+            'name' => 'Certificados o diplomas de actividades asistenciales.',
+            'type' => $catalogues['catalogue']['certificate']['type'],
+        ]);
+    }
+
+    private function createReCertificateCatalogues()
+    {
+        $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
+        Catalogue::factory()->create([
+            'code' => '1',
+            'name' => 'Certificados o diplomas de actividades académicas y/o actividades asistenciales.',
+            'type' => $catalogues['catalogue']['recertificate']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => '2',
+            'name' => 'Trabajos especiales de grado y artículos científicos publicados.',
+            'type' => $catalogues['catalogue']['recertificate']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => '3',
+            'name' => 'Actividad como editor o revisor de publicaciones científicas.',
+            'type' => $catalogues['catalogue']['recertificate']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => '4',
+            'name' => 'Certificados de asistencia a simposium, cursos o congresos de la especialidad.',
+            'type' => $catalogues['catalogue']['recertificate']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => '5',
+            'name' => 'Certificados de asistencia a simposio, cursos y congresos no pertenecientes a la especialidad.',
+            'type' => $catalogues['catalogue']['recertificate']['type'],
+        ]);
+    }
+
+    private function createConferenceCatalogues()
+    {
+        $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
+        Catalogue::factory()->create([
+            'code' => '1',
+            'name' => 'Conferencias presentadas con aval académico de Alacibu.',
+            'type' => $catalogues['catalogue']['conference']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => '2',
+            'name' => 'Conferencias presentadas sin aval académico de Alacibu.',
+            'type' => $catalogues['catalogue']['conference']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => '3',
+            'name' => 'Trabajos presentados con aval académico de Alacibu.',
+            'type' => $catalogues['catalogue']['conference']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => '4',
+            'name' => 'Trabajos presentados sin aval académico de Alacibu.',
+            'type' => $catalogues['catalogue']['conference']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => '5',
+            'name' => 'Trabajos publicados.',
+            'type' => $catalogues['catalogue']['conference']['type'],
+        ]);
+    }
+
+    private function createReConferenceCatalogues()
+    {
+        $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
+        Catalogue::factory()->create([
+            'code' => '1',
+            'name' => 'Conferencias nacionales e internacionales.',
+            'type' => $catalogues['catalogue']['reconference']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => '2',
+            'name' => 'Conferencias nacionales e internacionales presentadas en CIALACIBU.',
+            'type' => $catalogues['catalogue']['reconference']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => '3',
+            'name' => 'Afiliación a asociaciones odontológicas de la especialidad nacionales y en el extranjero.',
+            'type' => $catalogues['catalogue']['reconference']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => '4',
+            'name' => 'Colaboraciones académicas realizadas para el BLACIBU.',
+            'type' => $catalogues['catalogue']['reconference']['type'],
+        ]);
+    }
+
+    private function createMenus()
+    {
+        $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
+        Catalogue::factory()->create([
+            'code' => $catalogues['menu']['normal'],
+            'name' => 'MENU',
+            'type' => $catalogues['menu']['type'],
+        ]);
+        Catalogue::factory()->create([
+            'code' => $catalogues['menu']['mega'],
+            'name' => 'MEGA MENU',
+            'type' => $catalogues['menu']['type'],
+        ]);
+    }
+
+    private function createModules()
+    {
+        $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
+        $system = System::firstWhere('code', $catalogues['system']['code']);
+        $statusAvailable = Status::firstWhere('code', $catalogues['status']['available']);
+
+        Module::factory()->create([
+            'code' => $catalogues['module']['authentication'],
+            'name' => 'AUTHENTICATION',
+            'system_id' => $system->id,
+            'status_id' => $statusAvailable->id,
+        ]);
+
+        Module::factory()->create([
+            'code' => $catalogues['module']['app'],
+            'name' => 'APP',
+            'system_id' => $system->id,
+            'status_id' => $statusAvailable->id,
+        ]);
+    }
+
+    private function createRoutes()
+    {
+        $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
+        $moduleAuthentication = Module::firstWhere('code', $catalogues['module']['authentication']);
+        $moduleApp = Module::firstWhere('code', $catalogues['module']['app']);
+        $menuNormal = Catalogue::firstWhere('code', $catalogues['menu']['normal']);
+        $menuMega = Catalogue::firstWhere('code', $catalogues['menu']['mega']);
+        $statusAvailable = Status::firstWhere('code', $catalogues['status']['available']);
+
+        // Administrator
+        Route::factory()->create([
+            'uri' => $catalogues['route']['administrator']['administration'],
+            'module_id' => $moduleAuthentication->id,
+            'type_id' => $menuNormal->id,
+            'status_id' => $statusAvailable->id,
+            'name' => 'Administración de Usuarios',
+            'logo' => 'routes/route1.png',
+            'order' => 2
+        ]);
+        Route::factory()->create([
+            'uri' => $catalogues['route']['administrator']['validation'],
+            'module_id' => $moduleAuthentication->id,
+            'type_id' => $menuNormal->id,
+            'status_id' => $statusAvailable->id,
+            'name' => 'Validación de Documentos',
+            'logo' => 'routes/route2.png',
+            'order' => 1
+        ]);
+
+        // Routes Certificate
+        Route::factory()->create([
+            'uri' => $catalogues['route']['professional']['profile'],
+            'module_id' => $moduleApp->id,
+            'type_id' => $menuNormal->id,
+            'status_id' => $statusAvailable->id,
+            'name' => 'Mi Perfil',
+            'logo' => 'routes/route3.png',
+            'order' => 1
+        ]);
+        Route::factory()->create([
+            'uri' => $catalogues['route']['professional']['document'],
+            'module_id' => $moduleApp->id,
+            'type_id' => $menuNormal->id,
+            'status_id' => $statusAvailable->id,
+            'name' => 'Documentos',
+            'logo' => 'routes/route4.png',
+            'order' => 2
+        ]);
+        Route::factory()->create([
+            'uri' => $catalogues['route']['professional']['certificate'],
+            'module_id' => $moduleApp->id,
+            'type_id' => $menuNormal->id,
+            'status_id' => $statusAvailable->id,
+            'name' => 'Certificados',
+            'logo' => 'routes/route5.png',
+            'order' => 4
+        ]);
+        Route::factory()->create([
+            'uri' => $catalogues['route']['professional']['conference'],
+            'module_id' => $moduleApp->id,
+            'type_id' => $menuNormal->id,
+            'status_id' => $statusAvailable->id,
+            'name' => 'Conferencias y Trabajos',
+            'logo' => 'routes/route7.png',
+            'order' => 6
+        ]);
+        Route::factory()->create([
+            'uri' => $catalogues['route']['professional']['payment'],
+            'module_id' => $moduleApp->id,
+            'type_id' => $menuNormal->id,
+            'status_id' => $statusAvailable->id,
+            'name' => 'Constancia de pago',
+            'logo' => 'routes/route9.png',
+            'order' => 8
+        ]);
+
+        // Routes Recertificate
+        Route::factory()->create([
+            'uri' => $catalogues['route']['professional']['document'],
+            'module_id' => $moduleApp->id,
+            'type_id' => $menuNormal->id,
+            'status_id' => $statusAvailable->id,
+            'name' => 'Constancias',
+            'logo' => 'routes/route4.png',
+            'order' => 3
+        ]);
+        Route::factory()->create([
+            'uri' => $catalogues['route']['professional']['recertificate'],
+            'module_id' => $moduleApp->id,
+            'type_id' => $menuNormal->id,
+            'status_id' => $statusAvailable->id,
+            'name' => 'Certificados',
+            'logo' => 'routes/route6.png',
+            'order' => 5
+        ]);
+        Route::factory()->create([
+            'uri' => $catalogues['route']['professional']['reconference'],
+            'module_id' => $moduleApp->id,
+            'type_id' => $menuNormal->id,
+            'status_id' => $statusAvailable->id,
+            'name' => 'Conferencias y Afiliaciones',
+            'logo' => 'routes/route8.png',
+            'order' => 7
+        ]);
+    }
+
+    private function createUsers()
+    {
+        User::factory()->create([
+            'username' => '1234567890',
+            'identification' => '1234567890',
+        ]);
+        User::factory()->count(10)->create();
+    }
+
+    private function createProfessionals()
+    {
+        foreach (User::all() as $user) {
+            Professional::factory()->create([
+                'user_id' => $user->id
+            ]);
+        }
+    }
+
+    private function createUsersRoles()
+    {
+        $user = User::find(1);
+
+        foreach (Role::all() as $role) {
+            $user->roles()->attach($role->id);
+        }
+        $user = User::where('id', '!=', 1)->get();
+
+        foreach ($user as $users) {
+            $users->roles()->attach(random_int(1, Role::all()->count()));
+        }
+    }
+
+    private function createUsersInstitutions()
+    {
+        $user = User::find(1);
+
+        foreach (Institution::all() as $institution) {
+            $user->institutions()->syncWithoutDetaching($institution->id);
+        }
+    }
+
+    private function createSecurityQuestions()
+    {
+        SecurityQuestion::factory()->create(['name' => '¿Cuál es el nombre de su padre?']);
+        SecurityQuestion::factory()->create(['name' => '¿Cuál es el nombre de su madre?']);
+        SecurityQuestion::factory()->create(['name' => '¿Cuál es el nombre de su mascota?']);
+        SecurityQuestion::factory()->create(['name' => '¿Cuál es el nombre de su mejor amigo de la infancia?']);
+        SecurityQuestion::factory()->create(['name' => '¿Cuál es el nombre de su color favorito?']);
+        SecurityQuestion::factory()->create(['name' => '¿Cuál es el nombre de su fruta favorita?']);
+        SecurityQuestion::factory()->create(['name' => '¿Cuál es el nombre de su abuela materna?']);
+        SecurityQuestion::factory()->create(['name' => '¿Cuál es el nombre de su abuela paterna?']);
+        SecurityQuestion::factory()->create(['name' => '¿Cuál es su marca de auto favorito?']);
+        SecurityQuestion::factory()->create(['name' => '¿Cuál es el nombre de su canción favorita?']);
+    }
+}

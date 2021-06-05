@@ -1,0 +1,156 @@
+{
+    "status": {
+        "type": "STATUS_TYPE",
+        "active": "1",
+        "inactive": "2",
+        "locked": "3",
+        "available": "4",
+        "maintenance": "503",
+        "accepted": "ACCEPTED",
+        "rejected": "REJECTED",
+        "in_revision": "IN_REVISION",
+        "in_progress": "IN_PROGRESS"
+    },
+    "role": {
+        "admin": "ADMIN",
+        "certified": "CERTIFIED",
+        "recertified": "RECERTIFIED"
+    },
+    "module": {
+        "authentication": "AUTHENTICATION",
+        "app": "APP"
+    },
+    "permission": {
+        "action": {
+            "get": "GET",
+            "post": "POST",
+            "put": "PUT",
+            "delete": "DELETE"
+        }
+    },
+    "route": {
+        "dashboard": "/dashboard",
+        "administrator": {
+            "user": "/user",
+            "administration": "/administrator/administration",
+            "validation": "/administrator/validation"
+        },
+        "professional": {
+            "profile": "/professional/profile",
+            "document": "/professional/document",
+            "certificate": "/professional/certificate",
+            "recertificate": "/professional/re-certificate",
+            "conference": "/professional/conference",
+            "reconference": "/professional/re-conference",
+            "payment": "/professional/payment"
+        }
+    },
+    "menu": {
+        "type": "MENU_TYPE",
+        "normal": "NORMAL",
+        "mega": "MEGA"
+    },
+    "system": {
+        "code": "BLACIBU"
+    },
+    "workday": {
+        "type": {
+            "type": "WORKDAY_TYPE",
+            "work": "WORK",
+            "lunch": "LUNCH"
+        }
+    },
+    "task": {
+        "process": {
+            "type": "TASK_PROCESS",
+            "chancellor": "CHANCELLOR",
+            "vice_chancellor": "VICE_CHANCELLOR",
+            "concierge": "CONCIERGE",
+            "academic": "ACADEMIC",
+            "administrative": "ADMINISTRATIVE",
+            "investigation": "INVESTIGATION",
+            "community": "COMMUNITY"
+        },
+        "activity": {
+            "type": "TASK_ACTIVITY"
+        }
+    },
+    "catalogue": {
+        "sector": {
+            "type": "SECTOR"
+        },
+        "civil_status": {
+            "type": "CIVIL_STATUS",
+            "married": "MARRIED",
+            "single": "SINGLE",
+            "divorced": "DIVORCED",
+            "widower": "WIDOWER",
+            "union": "UNION"
+        },
+        "sex": {
+            "type": "SEX_TYPE",
+            "male": "MALE",
+            "female": "FEMALE"
+        },
+        "gender": {
+            "type": "GENDER_TYPE",
+            "male": "MALE",
+            "female": "FEMALE",
+            "other": "OTHER",
+            "not_say": "NOT_SAY"
+        },
+        "identification_type": {
+            "type": "IDENTIFICATION_TYPE",
+            "cc": "CC",
+            "passport": "PASSPORT"
+        },
+        "ethnic_origin": {
+            "type": "ETHNIC_ORIGIN_TYPE",
+            "indigena": "1",
+            "afroecuatoriano": "2",
+            "negro": "3",
+            "mulato": "4",
+            "montuvio": "5",
+            "mestizo": "6",
+            "blanco": "7",
+            "other": "8",
+            "unregistered": "9"
+        },
+        "blood_type": {
+            "type": "BLOOD_TYPE",
+            "a-": "A-",
+            "a+": "A+",
+            "b-": "B-",
+            "b+": "B+",
+            "ab-": "AB-",
+            "ab+": "AB+",
+            "o-": "O-",
+            "o+": "O+"
+        },
+        "location": {
+            "type": "LOCATION",
+            "country": "COUNTRY",
+            "province": "PROVINCE",
+            "canton": "CANTON",
+            "parish": "PARISH"
+        },
+        "document": {
+            "type": "DOCUMENT"
+        },
+        "constancy": {
+            "type": "CONSTANCY"
+        },
+        "certificate": {
+            "type": "CERTIFICATE"
+        },
+        "recertificate": {
+            "type": "RECERTIFICATE"
+        },
+        "conference": {
+            "type": "CONFERENCE"
+        },
+        "reconference": {
+            "type": "RECONFERENCE"
+        }
+    }
+}
