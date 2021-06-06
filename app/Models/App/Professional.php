@@ -54,6 +54,11 @@ class Professional extends Model implements Auditable
         return $this->hasMany(Certificate::class);
     }
 
+    public function country()
+    {
+        return $this->belongsTo(Location::class);
+    }
+
     public function conferences()
     {
         return $this->hasMany(Conference::class);

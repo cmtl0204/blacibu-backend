@@ -19,6 +19,9 @@ use App\Mail\Authentication\EmailVerifiedMailable;
 use App\Mail\EmailMailable;
 use App\Mail\Authentication\PasswordForgotMailable;
 use App\Mail\Authentication\UserUnlockMailable;
+use App\Models\App\Catalogue;
+use App\Models\App\Location;
+use App\Models\App\Professional;
 use App\Models\Authentication\Client;
 use App\Models\Authentication\PasswordReset;
 use App\Models\App\Status;
@@ -28,6 +31,7 @@ use App\Models\Authentication\UserUnlock;
 use App\Models\Authentication\User;
 use App\Models\Authentication\Role;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -37,6 +41,69 @@ use Laravel\Socialite\Facades\Socialite;
 
 class  AuthController extends Controller
 {
+    function register(Request $request)
+    {
+        if (User::where('username', $request->input('register.username'))->first()) {
+            return response()->json([
+                'data' => null,
+                'msg' => [
+                    'summary' => 'Número de documento ya existe: ' . $request->input('register.username'),
+                    'detail' => 'Por favor inicie sesión o ingrese otro número de documento',
+                    'code' => '400'
+                ]
+            ], 400);
+        }
+
+        if (User::where('email', $request->input('register.email'))->first()) {
+            return response()->json([
+                'data' => null,
+                'msg' => [
+                    'summary' => 'Correo electrónico ya existe: ' . $request->input('register.email'),
+                    'detail' => 'Por favor inicie sesión o ingrese otro correo electrónico',
+                    'code' => '400'
+                ]
+            ], 400);
+        }
+
+        $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
+
+        $role = Role::where('code', $request->input('register.type'))->first();
+        $language = Catalogue::find($request->input('register.language.id'));
+        $identificationType = Catalogue::find($request->input('register.identification_type.id'));
+        $country = Location::find($request->input('register.country.id'));
+        $status = Status::firstWhere('code', $catalogues['status']['in_revision']);
+
+        $user = new User();
+        $user->username = $request->input('register.username');
+        $user->identification = $request->input('register.username');
+        $user->name = $request->input('register.name');
+        $user->lastname = $request->input('register.lastname');
+        $user->email = $request->input('register.email');
+        $user->password = $request->input('register.password');
+        $user->language()->associate($language);
+        $user->identificationType()->associate($identificationType);
+        $professional = new Professional();
+        $professional->user()->associate($user);
+        $professional->country()->associate($country);
+        $professional->status()->associate($status);
+
+        DB::transaction(function () use ($user, $professional, $role) {
+            $user->save();
+            $user->roles()->attach($role);
+            $professional->save();
+        });
+        $this->emailVerifiedDirect($user, $role->system()->first()->id);
+        return response()->json([
+            'data' => $professional,
+            'msg' => [
+                'summary' => 'Su cuenta ha sido creada',
+                'detail' => 'Por favor verifique su correo electrónico para validar su cuenta',
+                'code' => '201'
+            ]
+        ], 201);
+
+    }
+
     function handleProviderCallback($driver)
     {
         $userSocialite = Socialite::driver($driver)->stateless()->user();
@@ -47,14 +114,16 @@ class  AuthController extends Controller
                 $user->markEmailAsVerified();
             }
             $token = $user->createToken($userSocialite->getEmail())->accessToken;
-            $url = "http://siga.test:4200/#/auth/login?username={$user->username}&token={$token}";
+//            $url = "http://siga.test:4200/#/auth/login?username={$user->username}&token={$token}";
+            $url = "http://localhost:4200/#/auth/login?username={$user->username}&token={$token}";
 
             return redirect()->to($url);
         }
 
-        $url = "http://siga.test:4200/#/auth/unregistered-user?email={$userSocialite->getEmail()}";
-//            ."&given_name={$userSocialite->user['given_name']}" .
-//            "&family_name={$userSocialite->user['family_name']}";
+//        $url = "http://localhost:4200/#/auth/unregistered-user?email={$userSocialite->getEmail()}"
+        $url = "http://localhost:4200/#/auth/register?email={$userSocialite->getEmail()}"
+            . "&given_name={$userSocialite->user['given_name']}" .
+            "&family_name={$userSocialite->user['family_name']}";
 
         return redirect()->to($url);
     }
@@ -69,10 +138,8 @@ class  AuthController extends Controller
         $user = new User();
         $user->username = $request->username;
         $user->identification = $request->username;
-        $user->first_name = $request->first_name;
-        $user->second_name = $request->second_name;
-        $user->first_lastname = $request->first_lastname;
-        $user->second_lastname = $request->second_lastname;
+        $user->name = $request->name;
+        $user->lastname = $request->lastname;
         $user->email = $request->email;
         $user->password = $request->password;
         $user->save();
@@ -432,11 +499,11 @@ class  AuthController extends Controller
             ]], 201);
     }
 
-    function emailVerified(AuthUserUnlockRequest $request)
+    private function emailVerifiedDirect($user, $systemId)
     {
-        $user = User::where('username', $request->input('username'))
-            ->orWhere('email', $request->input('username'))
-            ->orWhere('personal_email', $request->input('username'))
+        $user = User::where('username', $user->username)
+            ->orWhere('email', $user->username)
+            ->orWhere('personal_email', $user->username)
             ->first();
 
         if (!$user) {
@@ -454,7 +521,41 @@ class  AuthController extends Controller
                 'Verificación de Correo Electrónico',
                 json_encode(['user' => $user]),
                 null,
-                $request->input('system')
+                $systemId
+            ));
+
+        return response()->json([
+            'data' => null,
+            'msg' => [
+                'summary' => 'Correo enviado',
+                'detail' => $this->hiddenStringEmail($user->email),
+                'code' => '201'
+            ]], 201);
+    }
+
+    function emailVerified(Request $request)
+    {
+        $user = User::where('username', $request->username)
+            ->orWhere('email', $request->username)
+            ->orWhere('personal_email', $request->username)
+            ->first();
+
+        if (!$user) {
+            return response()->json([
+                'data' => null,
+                'msg' => [
+                    'summary' => 'Usuario no encontrando',
+                    'detail' => 'Intente de nuevo',
+                    'code' => '404'
+                ]], 404);
+        }
+
+        Mail::to($user->email)
+            ->send(new EmailVerifiedMailable(
+                'Verificación de Correo Electrónico',
+                json_encode(['user' => $user]),
+                null,
+                $request->system
             ));
 
         return response()->json([
@@ -617,7 +718,7 @@ class  AuthController extends Controller
             ->where('system_id', $request->system)
             ->get();
 
-        if($permissions->count()===0){
+        if ($permissions->count() === 0) {
             return response()->json([
                 'data' => null,
                 'msg' => [

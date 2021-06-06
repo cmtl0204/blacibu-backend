@@ -17,10 +17,6 @@ class CheckRole
     public function handle(Request $request, Closure $next)
     {
         $request->validate([
-            'institution' => [
-                'required',
-                'integer',
-            ],
             'system' => [
                 'required',
                 'integer',
@@ -32,10 +28,7 @@ class CheckRole
         ]);
 
         $role = $request->user()->roles()
-            ->where(function ($query) use ($request) {
-                $query->where('institution_id', $request->institution)
-                    ->orWhere('system_id', $request->system);
-            })
+            ->where('system_id', $request->system)
             ->where('role_id', $request->role)
             ->first();
 

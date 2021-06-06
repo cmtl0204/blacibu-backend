@@ -17,6 +17,7 @@ class CheckPermissions
         ]);
 
         $role = Role::findOrFail($request->role);
+
         $allPermission = $role->permissions()
             ->whereHas('route', function ($route) use ($request) {
                 $route->where('uri', $request->uri);

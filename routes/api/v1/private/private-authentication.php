@@ -11,8 +11,8 @@ use App\Http\Controllers\Authentication\ShortcutController;
 use App\Http\Controllers\Authentication\SystemController;
 use App\Http\Controllers\Authentication\UserAdministrationController;
 
-//$middlewares = ['auth:api', 'check-institution', 'check-role', 'check-status', 'check-attempts', 'check-permissions'];
-//$middlewares = ['auth:api', 'verified', 'check-role', 'check-institution', 'check-status', 'check-attempts', 'check-permissions'];
+//$middlewares = ['auth:api',  'check-role', 'check-status', 'check-attempts', 'check-permissions'];
+//$middlewares = ['auth:api', 'verified', 'check-role',  'check-status', 'check-attempts', 'check-permissions'];
 
 Route::get('test', function (\Illuminate\Http\Request $request) {
 //                $request->user()->sendEmailVerificationNotification();
@@ -30,16 +30,16 @@ Route::apiResource('systems', SystemController::class)->except('show');
 // Auth
 Route::prefix('auth')->group(function () {
     Route::get('roles', [AuthController::class, 'getRoles'])
-        ->withoutMiddleware(['check-institution', 'check-role', 'check-permissions']);
+        ->withoutMiddleware(['check-role', 'check-permissions']);
     Route::get('permissions', [AuthController::class, 'getPermissions'])
-        ->withoutMiddleware(['check-institution', 'check-permissions']);
+        ->withoutMiddleware(['check-permissions']);
     Route::put('change-password', [AuthController::class, 'changePassword'])
-        ->withoutMiddleware(['check-institution', 'check-role', 'check-permissions']);
+        ->withoutMiddleware(['check-role', 'check-permissions']);
     Route::post('transactional-code', [AuthController::class, 'generateTransactionalCode']);
     Route::get('logout', [AuthController::class, 'logout']);
     Route::get('logout-all', [AuthController::class, 'logoutAll']);
     Route::get('reset-attempts', [AuthController::class, 'resetAttempts'])
-        ->withoutMiddleware(['check-institution', 'check-role', 'check-permissions']);
+        ->withoutMiddleware(['check-role', 'check-permissions']);
     Route::post('test', function (\Illuminate\Http\Request $request) {
         return $request->user()->markEmailAsVerified();
 
@@ -49,7 +49,7 @@ Route::prefix('auth')->group(function () {
 // User
 Route::prefix('user')->group(function () {
     Route::get('{username}', [UserController::class, 'show'])
-        ->withoutMiddleware(['check-institution', 'check-role', 'check-permissions']);
+        ->withoutMiddleware(['check-role', 'check-permissions']);
     Route::post('filters', [UserController::class, 'index']);
     Route::post('avatars', [UserController::class, 'uploadAvatar']);
     Route::get('export', [UserController::class, 'export']);
@@ -58,9 +58,12 @@ Route::prefix('user')->group(function () {
 //User Administration
 Route::prefix('user-admin')->group(function () {
     Route::get('professionals', [UserAdministrationController::class, 'getProfessionals']);
-    Route::get('professionals/documents', [UserAdministrationController::class, 'getProfessionalDocuments'])->withoutMiddleware('auth:api');;
+    Route::get('professionals/certified-documents', [UserAdministrationController::class, 'getCertifiedDocuments']);
+    Route::get('professionals/re-certified-documents', [UserAdministrationController::class, 'getReCertifiedDocuments']);
     Route::put('professionals/approve', [UserAdministrationController::class, 'approveProfessional']);
+    Route::put('professionals/documents/approve', [UserAdministrationController::class, 'approveDocumentProfessional']);
     Route::put('professionals/reject', [UserAdministrationController::class, 'rejectProfessional']);
+    Route::put('professionals/documents/reject', [UserAdministrationController::class, 'rejectDocumentProfessional']);
     Route::put('professionals/revise', [UserAdministrationController::class, 'reviseProfessional']);
     Route::put('delete', [UserAdministrationController::class, 'delete']);
 });

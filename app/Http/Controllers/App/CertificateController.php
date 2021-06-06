@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\App\File\UploadFileRequest;
 use App\Models\App\Catalogue;
 use App\Models\App\Certificate;
+use App\Models\App\Status;
 use Illuminate\Http\Request;
 
 class CertificateController extends Controller
@@ -20,7 +21,7 @@ class CertificateController extends Controller
             });
         })
             ->with(['certificates' => function ($certificates) use ($professional, $request) {
-                $certificates->with(['file'])
+                $certificates->with(['file','status'])
                     ->where('professional_id', $professional->id);
             }])
             ->get();
@@ -49,9 +50,11 @@ class CertificateController extends Controller
 
     function uploadFiles(UploadFileRequest $request)
     {
+        $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
         $certificateData = json_decode($request->input('certificate'));
         $professional = $request->user();
         $type = Catalogue::getInstance($request->input('type'));
+        $status = Status::firstWhere('code', $catalogues['status']['in_revision']);
 
         $certificate = new Certificate();
         $certificate->modality = $certificateData->modality;
@@ -64,6 +67,7 @@ class CertificateController extends Controller
         $certificate->in_quality = $certificateData->in_quality;
         $certificate->professional()->associate($professional);
         $certificate->type()->associate($type);
+        $certificate->status()->associate($status);
         $certificate->save();
 
         return (new FileController())->upload($request, $certificate);
@@ -71,6 +75,8 @@ class CertificateController extends Controller
 
     function update(Request $request)
     {
+        $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
+        $status = Status::firstWhere('code', $catalogues['status']['in_revision']);
         $certificate =  Certificate::find($request->input('certificate.id'));
         $certificate->modality = $request->input('certificate.modality');
         $certificate->name = $request->input('certificate.name');
@@ -80,6 +86,7 @@ class CertificateController extends Controller
         $certificate->institution_endorse =$request->input('certificate.institution_endorse');
         $certificate->indexed_journal =$request->input('certificate.indexed_journal');
         $certificate->in_quality = $request->input('certificate.in_quality');
+        $certificate->status()->associate($status);
         $certificate->save();
 
         return response()->json([

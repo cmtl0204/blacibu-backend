@@ -26,14 +26,13 @@ use App\Models\App\File;
  * @property Date birthdate
  * @property string email
  * @property Date email_verified_at
- * @property string first_lastname
+ * @property string lastname
  * @property string name
  * @property string identification
  * @property boolean is_changed_password
  * @property string password
  * @property string personal_email
  * @property string phone
- * @property string second_lastname
  * @property string username
  */
 class User extends Authenticatable implements Auditable, MustVerifyEmail
@@ -55,14 +54,13 @@ class User extends Authenticatable implements Auditable, MustVerifyEmail
         'birthdate',
         'email',
         'email_verified_at',
-        'first_lastname',
+        'lastname',
         'name',
         'identification',
         'is_changed_password',
         'password',
         'personal_email',
         'phone',
-        'second_lastname',
         'username',
     ];
 
@@ -112,11 +110,6 @@ class User extends Authenticatable implements Auditable, MustVerifyEmail
         return $this->belongsTo(Catalogue::class);
     }
 
-    function company()
-    {
-        return $this->hasOne(Company::class);
-    }
-
     function civilStatus()
     {
         return $this->belongsTo(Catalogue::class);
@@ -150,6 +143,11 @@ class User extends Authenticatable implements Auditable, MustVerifyEmail
     function institutions()
     {
         return $this->morphToMany(Institution::class, 'institutionable', 'app.institutionables');
+    }
+
+    function language()
+    {
+        return $this->belongsTo(Catalogue::class);
     }
 
     function permissions()
@@ -187,30 +185,25 @@ class User extends Authenticatable implements Auditable, MustVerifyEmail
         return $this->belongsTo(Status::class);
     }
 
-    function teacher()
-    {
-        return $this->hasOne(Professional::class);
-    }
-
     // Accessors
     function getFullNameAttribute()
     {
-        return "{$this->attributes['name']} {$this->attributes['first_lastname']} {$this->attributes['second_lastname']}";
+        return "{$this->attributes['name']} {$this->attributes['lastname']}";
     }
 
     function getFullLastnameAttribute()
     {
-        return "{$this->attributes['name']} {$this->attributes['first_lastname']} {$this->attributes['second_lastname']}";
+        return "{$this->attributes['lastname']} {$this->attributes['name']} ";
     }
 
     function getPartialNameAttribute()
     {
-        return "{$this->attributes['name']} {$this->attributes['first_lastname']}";
+        return "{$this->attributes['name']} {$this->attributes['lastname']}";
     }
 
     function getPartialLastnameAttribute()
     {
-        return "{$this->attributes['first_lastname']} {$this->attributes['name']}";
+        return "{$this->attributes['lastname']} {$this->attributes['name']}";
     }
 
     // Mutators
@@ -219,14 +212,9 @@ class User extends Authenticatable implements Auditable, MustVerifyEmail
         $this->attributes['name'] = strtoupper($value);
     }
 
-    function setFirstLastnameAttribute($value)
+    function setLastnameAttribute($value)
     {
-        $this->attributes['first_lastname'] = strtoupper($value);
-    }
-
-    function setSecondLastnameAttribute($value)
-    {
-        $this->attributes['second_lastname'] = strtoupper($value);
+        $this->attributes['lastname'] = strtoupper($value);
     }
 
     function setEmailAttribute($value)
@@ -252,10 +240,10 @@ class User extends Authenticatable implements Auditable, MustVerifyEmail
         }
     }
 
-    function scopeFirstLastname($query, $first_lastname)
+    function scopeLastname($query, $lastname)
     {
-        if ($first_lastname) {
-            return $query->orWhere('first_lastname', 'ILIKE', "%$first_lastname%");
+        if ($lastname) {
+            return $query->orWhere('astname', 'ILIKE', "%$lastname%");
         }
     }
 
@@ -270,13 +258,6 @@ class User extends Authenticatable implements Auditable, MustVerifyEmail
     {
         if ($identification) {
             return $query->orWhere('identification', 'ILIKE', "%$identification%");
-        }
-    }
-
-    function scopeSecondLastname($query, $second_lastname)
-    {
-        if ($second_lastname) {
-            return $query->orWhere('second_lastname', 'ILIKE', "%$second_lastname%");
         }
     }
 }

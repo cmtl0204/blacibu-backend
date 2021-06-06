@@ -15,9 +15,6 @@ class CheckRoleRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'institution' => [
-                'required'
-            ],
             'system' => [
                 'required',
             ],

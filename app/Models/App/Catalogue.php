@@ -69,6 +69,11 @@ class Catalogue extends Model implements Auditable
         return $this->hasMany(Document::class,'type_id');
     }
 
+    public function document()
+    {
+        return $this->hasOne(Document::class,'type_id');
+    }
+
     // Mutators
     public function setCodeAttribute($value)
     {

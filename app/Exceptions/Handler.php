@@ -44,7 +44,7 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $e)
     {
-        return parent::render($request, $e);
+//        return parent::render($request, $e);
         if ($e instanceof OAuthServerException) {
             // grant type is not supported
             if ($e->getCode() === 2) {
@@ -93,9 +93,9 @@ class Handler extends ExceptionHandler
                 return response()->json([
                     'data' => $e->getMessage(),
                     'msg' => [
-                        'summary' => 'Su dirección de correo electrónico no está verificada.',
-                        'detail' => 'Por favor revise su correo',
-                        'code' => $e->getCode()
+                        'summary' => 'Su dirección de correo electrónico no está verificada',
+                        'detail' => 'Por favor revise su correo o haga click en Enviar para recibir una notificación',
+                        'code' => '403-email'
                     ]], 403);
             }
             if ($e->getStatusCode() === 404) {

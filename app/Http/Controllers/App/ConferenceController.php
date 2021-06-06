@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\App\File\UploadFileRequest;
 use App\Models\App\Catalogue;
 use App\Models\App\Conference;
+use App\Models\App\Status;
 use Illuminate\Http\Request;
 
 class ConferenceController extends Controller
@@ -20,7 +21,7 @@ class ConferenceController extends Controller
             });
         })
             ->with(['conferences' => function ($conferences) use ($professional, $request) {
-                $conferences->with(['file'])
+                $conferences->with(['file','status'])
                     ->where('professional_id', $professional->id);
             }])
             ->get();
@@ -49,9 +50,11 @@ class ConferenceController extends Controller
 
     function uploadFiles(UploadFileRequest $request)
     {
+        $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
         $conferenceData = json_decode($request->input('conference'));
         $professional = $request->user();
         $type = Catalogue::getInstance($request->input('type'));
+        $status = Status::firstWhere('code', $catalogues['status']['in_revision']);
 
         $conference = new Conference();
         $conference->modality = $conferenceData->modality;
@@ -65,6 +68,7 @@ class ConferenceController extends Controller
         $conference->event = $conferenceData->event;
         $conference->professional()->associate($professional);
         $conference->type()->associate($type);
+        $conference->status()->associate($status);
         $conference->save();
 
         return (new FileController())->upload($request, $conference);
@@ -72,6 +76,8 @@ class ConferenceController extends Controller
 
     function update(Request $request)
     {
+        $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
+        $status = Status::firstWhere('code', $catalogues['status']['in_revision']);
         $conference =  Conference::find($request->input('conference.id'));
         $conference->modality = $request->input('conference.modality');
         $conference->name = $request->input('conference.name');
@@ -81,6 +87,7 @@ class ConferenceController extends Controller
         $conference->indexed_journal =$request->input('conference.indexed_journal');
         $conference->association =$request->input('conference.association');
         $conference->event = $request->input('conference.event');
+        $conference->status()->associate($status);
         $conference->save();
 
         return response()->json([

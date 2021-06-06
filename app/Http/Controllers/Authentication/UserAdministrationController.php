@@ -7,12 +7,17 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Authentication\User\UserCreateRequest;
 use App\Http\Requests\Authentication\UserAdministration\UserAdminIndexRequest;
 use App\Http\Requests\Authentication\UserRequest;
+use App\Models\App\Certificate;
+use App\Models\App\Conference;
+use App\Models\App\Document;
+use App\Models\App\Location;
 use App\Models\App\Professional;
 use App\Models\Authentication\PassworReset;
 use App\Models\Authentication\Role;
 use App\Models\App\Catalogue;
 use App\Models\App\Status;
 use App\Models\Authentication\User;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -31,11 +36,10 @@ class  UserAdministrationController extends Controller
             })
                 ->where(function ($query) use ($search) {
                     $query->email($search);
-                    $query->firstlastname($search);
+                    $query->lastname($search);
                     $query->firstname($search);
                     $query->identification($search);
-                    $query->secondlastname($search);
-                    $query->secondname($search);
+                    $query->name($search);
                 })
                 ->with(['institutions' => function ($institutions) {
                     $institutions->orderBy('name');
@@ -103,10 +107,9 @@ class  UserAdministrationController extends Controller
         if ($request->has('search')) {
             $users = $users->where(function ($query) use ($search) {
                 $query->email($search);
-                $query->firstlastname($search);
+                $query->lastname($search);
                 $query->name($search);
                 $query->identification($search);
-                $query->secondlastname($search);
             });
         }
 
@@ -155,6 +158,37 @@ class  UserAdministrationController extends Controller
         ], 200);
     }
 
+    public function approveDocumentProfessional(Request $request)
+    {
+        $status = Status::where('code', 'ACCEPTED')->first();
+        switch ($request->input('type')) {
+            case 'CONSTANCY':
+            case 'DOCUMENT':
+                $model = Document::find($request->input('id'));
+                break;
+            case 'RECONFERENCE':
+            case 'CONFERENCE':
+                $model = Conference::find($request->input('id'));
+                break;
+            case 'RECERTIFICATE':
+            case 'CERTIFICATE':
+                $model = Certificate::find($request->input('id'));
+                break;
+        }
+
+        $model->status()->associate($status);
+        $model->save();
+
+        return response()->json([
+            'data' => null,
+            'msg' => [
+                'summary' => 'APROBADO',
+                'detail' => '',
+                'code' => '200'
+            ]
+        ], 200);
+    }
+
     public function rejectProfessional(Request $request)
     {
         $status = Status::where('code', 'REJECTED')->first();
@@ -171,22 +205,104 @@ class  UserAdministrationController extends Controller
         ], 200);
     }
 
-    public function getProfessionalDocuments(Request $request)
+    public function rejectDocumentProfessional(Request $request)
+    {
+        $status = Status::where('code', 'REJECTED')->first();
+        switch ($request->input('type')) {
+            case 'CONSTANCY':
+            case 'DOCUMENT':
+                $model = Document::find($request->input('id'));
+                break;
+            case 'RECONFERENCE':
+            case 'CONFERENCE':
+                $model = Conference::find($request->input('id'));
+                break;
+            case 'RECERTIFICATE':
+            case 'CERTIFICATE':
+                $model = Certificate::find($request->input('id'));
+                break;
+        }
+        $model->status()->associate($status);
+        $model->save();
+
+        return response()->json([
+            'data' => null,
+            'msg' => [
+                'summary' => 'RECHAZADO',
+                'detail' => '',
+                'code' => '200'
+            ]
+        ], 200);
+    }
+    public function getCertifiedDocuments(Request $request)
     {
         $professional = Professional::find($request->input('professional_id'));
+        $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
 
-        $documents = Catalogue::where('type', 'DOCUMENT')
-            ->with(['conferences' => function ($conferences) use ($professional, $request) {
-                $conferences->with(['file'])
+        $documents = Catalogue::where('type', $catalogues['catalogue']['document']['type'])
+            ->with(['document' => function ($document) use ($professional, $request) {
+                $document->with(['file', 'status'])
                     ->where('professional_id', $professional->id);
             }])
-            ->with(['documents' => function ($conferences) use ($professional, $request) {
-                $conferences->with(['file'])
+            ->get();
+
+        $conferences = Catalogue::where('type', $catalogues['catalogue']['conference']['type'])
+            ->with(['conferences' => function ($conferences) use ($professional, $request) {
+                $conferences->with(['file', 'status'])
+                    ->where('professional_id', $professional->id);
+            }])
+            ->get();
+
+        $certificates = Catalogue::where('type', $catalogues['catalogue']['certificate']['type'])
+            ->with(['certificates' => function ($certificates) use ($professional, $request) {
+                $certificates->with(['file', 'status'])
                     ->where('professional_id', $professional->id);
             }])
             ->get();
         return response()->json([
-            'data' => $documents,
+            'data' => [
+                'documents' => $documents,
+                'conferences' => $conferences,
+                'certificates' => $certificates,
+            ],
+            'msg' => [
+                'summary' => 'success',
+                'detail' => '',
+                'code' => '200',
+            ]], 200);
+    }
+
+    public function getReCertifiedDocuments(Request $request)
+    {
+        $professional = Professional::find($request->input('professional_id'));
+        $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
+
+        $documents = Catalogue::where('type', $catalogues['catalogue']['constancy']['type'])
+            ->with(['document' => function ($document) use ($professional, $request) {
+                $document->with(['file', 'status'])
+                    ->where('professional_id', $professional->id);
+            }])
+            ->get();
+
+        $conferences = Catalogue::where('type', $catalogues['catalogue']['reconference']['type'])
+            ->with(['conferences' => function ($conferences) use ($professional, $request) {
+                $conferences->with(['file', 'status'])
+                    ->where('professional_id', $professional->id);
+            }])
+            ->get();
+
+        $certificates = Catalogue::where('type', $catalogues['catalogue']['recertificate']['type'])
+            ->with(['certificates' => function ($certificates) use ($professional, $request) {
+                $certificates->with(['file', 'status'])
+                    ->where('professional_id', $professional->id);
+            }])
+            ->get();
+        return response()->json([
+            'data' => [
+                'documents' => $documents,
+                'conferences' => $conferences,
+                'certificates' => $certificates,
+            ],
             'msg' => [
                 'summary' => 'success',
                 'detail' => '',
@@ -237,10 +353,8 @@ class  UserAdministrationController extends Controller
         $user = new User();
         $user->identification = $request->input('user.identification');
         $user->username = $request->input('user.username');
-        $user->first_name = $request->input('user.first_name');
-        $user->second_name = $request->input('user.second_name');
-        $user->first_lastname = $request->input('user.first_lastname');
-        $user->second_lastname = $request->input('user.second_lastname');
+        $user->name = $request->input('user.name');
+        $user->lastname = $request->input('user.lastname');
         $user->birthdate = $request->input('user.birthdate');
         $user->email = $request->input('user.email');
         $user->password = Hash::make($request->input('user.password'));
@@ -279,8 +393,8 @@ class  UserAdministrationController extends Controller
             $user = User::find($userId);
             $user->identification = $request->input('user.identification');
             $user->username = $request->input('user.username');
-            $user->first_name = $request->input('user.first_name');
-            $user->first_lastname = $request->input('user.first_lastname');
+            $user->name = $request->input('user.name');
+            $user->lastname = $request->input('user.lastname');
             $user->birthdate = $request->input('user.birthdate');
             $user->email = $request->input('user.email');
             $user->phone = $request->input('user.phone');

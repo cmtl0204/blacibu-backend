@@ -22,7 +22,7 @@
                 <b class="ml-2">{{\Carbon\Carbon::now()->toTimeString()}}</b>
             </p>
             <p class="text-muted">
-                Estimado/a: <b>{{$data->user->first_lastname}} {{$data->user->second_lastname}} {{$data->user->first_name}} {{$data->user->second_name}}</b></p>
+                Estimado/a: <b>{{$data->user->lastname}} {{$data->user->name}}</b></p>
             <br>
             @yield('content')
             <hr size="3">

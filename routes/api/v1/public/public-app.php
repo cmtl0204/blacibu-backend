@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\App\CatalogueController;
 use App\Http\Controllers\App\LocationController;
 use App\Http\Requests\Authentication\Auth\CreateClientRequest;
 use Illuminate\Support\Facades\Artisan;
@@ -7,8 +8,13 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 
+Route::apiResource('catalogues', CatalogueController::class);
+
+Route::apiResource('locations', LocationController::class);
+
 Route::group(['prefix' => 'location'], function () {
     Route::get('get', [LocationController::class, 'getLocations']);
+    Route::get('countries', [LocationController::class, 'getCountries']);
 });
 
 Route::get('init', function (CreateClientRequest $request) {

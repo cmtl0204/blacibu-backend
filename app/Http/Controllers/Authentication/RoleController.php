@@ -71,7 +71,7 @@ class RoleController extends Controller
                         }])->with('institution');
                     }]);
             }])
-            ->orderBy('first_lastname')
+            ->orderBy('lastname')
             ->get();
 
         return response()->json(['data' => $users,

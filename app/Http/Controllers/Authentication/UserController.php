@@ -46,8 +46,8 @@ class  UserController extends Controller
         $user = User::findOrFail($dataUser['id']);
         $user->identification = $dataUser['identification'];
         $user->username = strtoupper(trim($dataUser['username']));
-        $user->first_name = strtoupper(trim($dataUser['first_name']));
-        $user->first_lastname = strtoupper(trim($dataUser['first_lastname']));
+        $user->name = strtoupper(trim($dataUser['name']));
+        $user->lastname = strtoupper(trim($dataUser['lastname']));
         $user->birthdate = trim($dataUser['birthdate']);
         $user->email = strtolower(trim($dataUser['email']));
 
@@ -80,8 +80,8 @@ class  UserController extends Controller
         $user = User::findOrFail($dataUser['id']);
         $user->identification = $dataUser['identification'];
         $user->username = strtoupper(trim($dataUser['username']));
-        $user->first_name = strtoupper(trim($dataUser['first_name']));
-        $user->first_lastname = strtoupper(trim($dataUser['first_lastname']));
+        $user->name = strtoupper(trim($dataUser['name']));
+        $user->lastname = strtoupper(trim($dataUser['lastname']));
         $user->birthdate = trim($dataUser['birthdate']);
         $user->email = strtolower(trim($dataUser['email']));
 

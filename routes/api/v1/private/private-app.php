@@ -2,7 +2,6 @@
 
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\App\CatalogueController;
 use App\Http\Controllers\App\ImageController;
 use App\Http\Controllers\App\ProfessionalController;
 use App\Http\Controllers\App\DocumentController;
@@ -12,8 +11,6 @@ use App\Http\Controllers\App\FileController;
 use App\Http\Controllers\App\LocationController;
 use App\Http\Controllers\App\EmailController;
 
-Route::apiResource('catalogues', CatalogueController::class);
-Route::apiResource('locations', LocationController::class);
 Route::get('countries', [LocationController::class, 'getCountries']);
 
 Route::group(['prefix' => 'location'], function () {

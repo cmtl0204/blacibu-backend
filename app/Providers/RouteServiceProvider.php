@@ -53,7 +53,7 @@ class RouteServiceProvider extends ServiceProvider
             ->group(base_path("routes/api/$version/public/public-authentication.php"));
 
         Route::prefix("$version/private/authentication")
-            ->middleware(['api','auth:api'])
+            ->middleware(['api', 'auth:api', 'verified', 'check-role', 'check-attempts', 'check-status']) // , 'check-permissions'
             ->group(base_path("routes/api/$version/private/private-authentication.php"));
 
         Route::prefix("$version/public/app")
@@ -61,7 +61,7 @@ class RouteServiceProvider extends ServiceProvider
             ->group(base_path("routes/api/$version/public/public-app.php"));
 
         Route::prefix("$version/private/app")
-            ->middleware(['api','auth:api'])
+            ->middleware(['api', 'auth:api', 'verified', 'check-role', 'check-attempts', 'check-status']) //, 'check-permissions'
             ->group(base_path("routes/api/$version/private/private-app.php"));
     }
 

@@ -10,6 +10,11 @@ class CreateAuthUsersTable extends Migration
     {
         Schema::connection('pgsql-authentication')->create('users', function (Blueprint $table) {
             $table->id();
+
+            $table->foreignId('language_id')
+                ->nullable()
+                ->constrained('app.catalogues');
+
             $table->foreignId('ethnic_origin_id')
                 ->nullable()
                 ->constrained('app.catalogues');
@@ -62,10 +67,7 @@ class CreateAuthUsersTable extends Migration
             $table->string('name')
                 ->nullable();
 
-            $table->string('first_lastname')
-                ->nullable();
-
-            $table->string('second_lastname')
+            $table->string('lastname')
                 ->nullable();
 
             $table->string('personal_email')

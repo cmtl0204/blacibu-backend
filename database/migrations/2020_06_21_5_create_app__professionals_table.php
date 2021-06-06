@@ -19,7 +19,7 @@ class CreateAppProfessionalsTable extends Migration
                 ->nullable()
                 ->constrained('app.status');
 
-            $table->foreignId('location_id')
+            $table->foreignId('country_id')
                 ->nullable()
                 ->constrained('app.locations');
 

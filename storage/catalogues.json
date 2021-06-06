@@ -8,8 +8,7 @@
         "maintenance": "503",
         "accepted": "ACCEPTED",
         "rejected": "REJECTED",
-        "in_revision": "IN_REVISION",
-        "in_progress": "IN_PROGRESS"
+        "in_revision": "IN_REVISION"
     },
     "role": {
         "admin": "ADMIN",
@@ -101,7 +100,7 @@
         },
         "identification_type": {
             "type": "IDENTIFICATION_TYPE",
-            "cc": "CC",
+            "identification": "IDENTIFICATION",
             "passport": "PASSPORT"
         },
         "ethnic_origin": {
@@ -133,6 +132,23 @@
             "province": "PROVINCE",
             "canton": "CANTON",
             "parish": "PARISH"
+        },
+        "region": {
+            "type": "REGION",
+            "america": "AMERICA",
+            "europe": "EUROPE",
+            "asia": "ASIA",
+            "africa": "AFRICA",
+            "oceania": "OCEANIA",
+            "antartica": "ANTARTICA"
+        },
+        "language": {
+            "type": "LANGUAGE"
+        },
+        "document_type": {
+            "type": "DOCUMENT_TYPE",
+            "certified": "CERTIFICADO",
+            "recertified": "RECERTIFICADO"
         },
         "document": {
             "type": "DOCUMENT"

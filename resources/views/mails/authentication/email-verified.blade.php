@@ -9,7 +9,7 @@
             <p>Para ello simplemente debe hacer click en el siguiente enlace:</p>
             <div class=" text-center">
                 <a class="btn btn-primary text-center"
-                   href="{{env('APP_URL')}}/authentication/auth/verify-email/{{$data->user->id}}?system={{$system->id}}">
+                   href="{{env('APP_URL')}}/public/authentication/auth/verify-email/{{$data->user->id}}?system={{$system->id}}">
                     Verificar Correo Electrónico
                 </a>
             </div>
@@ -17,7 +17,7 @@
             <br>
             <p class="text-muted">Si no puede acceder, copie la siguiente url:</p>
             <p class="text-muted">
-                {{env('APP_URL')}}/authentication/auth/verify-email/{{$data->user->id}}?system={{$system->id}}
+                {{env('APP_URL')}}/public/authentication/auth/verify-email/{{$data->user->id}}?system={{$system->id}}
             </p>
             <br>
             <p>Si no ha solicitado este servicio, repórtelo a su Institución.</p>

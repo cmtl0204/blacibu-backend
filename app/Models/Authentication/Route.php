@@ -2,6 +2,7 @@
 
 namespace App\Models\Authentication;
 
+use App\Models\App\Status;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -69,7 +70,7 @@ class Route extends Model implements Auditable
 
     public function status()
     {
-        return $this->belongsTo(Catalogue::class);
+        return $this->belongsTo(Status::class);
     }
 
     public function permission()

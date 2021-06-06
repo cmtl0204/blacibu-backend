@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\App\File\UploadFileRequest;
 use App\Models\App\Catalogue;
 use App\Models\App\Document;
+use App\Models\App\Status;
 use Illuminate\Http\Request;
 
 class DocumentController extends Controller
@@ -15,9 +16,9 @@ class DocumentController extends Controller
 
         $professional = $request->user()->professional()->first();
 
-        $documents = $professional->documents()->with(['type', 'file'])
-            ->whereHas('type',function ($type) use($request){
-                $type->where('type',$request->input('type'));
+        $documents = $professional->documents()->with(['type', 'file','status'])
+            ->whereHas('type', function ($type) use ($request) {
+                $type->where('type', $request->input('type'));
             })
             ->get();
 
@@ -46,12 +47,15 @@ class DocumentController extends Controller
 
     function uploadFiles(UploadFileRequest $request)
     {
+        $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
         $professional = $request->user();
-        $type = Catalogue::getInstance($request->input('type'));
+        $type = Catalogue::find($request->input('type'));
+        $status = Status::firstWhere('code', $catalogues['status']['in_revision']);
         $document = new Document();
         $document->aditional_information = $request->input('document.aditional_information');
         $document->professional()->associate($professional);
         $document->type()->associate($type);
+        $document->status()->associate($status);
         $document->save();
 
         return (new FileController())->upload($request, $document);
