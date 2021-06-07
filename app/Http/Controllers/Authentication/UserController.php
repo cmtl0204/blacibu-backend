@@ -125,7 +125,7 @@ class  UserController extends Controller
         $user = $request->user();
         Storage::disk('public')->delete($user->avatar);
         $name = $user->id . '.' . strtolower($avatar->getClientOriginalExtension());
-        $filePath = storage_path('app\public\avatars\\') . $name;
+        $filePath = storage_path('app/public/avatars/') . $name;
 
         $avatar = InterventionImage::make($avatar);
         $avatar->widen(300, function ($constraint) {
