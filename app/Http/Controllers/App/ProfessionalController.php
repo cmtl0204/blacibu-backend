@@ -7,17 +7,9 @@ use App\Http\Requests\App\File\UploadFileRequest;
 use App\Models\App\Address;
 use App\Models\App\Catalogue;
 use App\Models\App\File;
-use App\Models\App\Image;
 use App\Models\App\Location;
 use App\Models\App\Payment;
-use App\Models\App\Professional;
-use App\Models\App\SocialMedia;
-use App\Models\App\Status;
-use App\Models\Authentication\Role;
-use App\Models\Authentication\User;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class ProfessionalController extends Controller
