@@ -11,9 +11,9 @@ class CreateAppSocialmediablesTable extends Migration
         Schema::connection('pgsql-app')->create('socialmediables', function (Blueprint $table) {
             $table->id();
             $table->foreignId('socialmedia_id')->constrained('app.socialmedia');
-            $table->morphs('socialmediables');
-            $table->string('user');
-            $table->string('url');
+            $table->morphs('socialmediable');
+            $table->string('user')->nullable();
+            $table->string('url')->nullable();
             $table->timestamps();
         });
     }

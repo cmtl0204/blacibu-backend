@@ -73,6 +73,11 @@ class Professional extends Model implements Auditable
     {
         return $this->morphMany(Image::class, 'imageable');
     }
+    public function socialmedia()
+    {
+        return $this->morphToMany(Socialmedia::class, 'socialmediable', 'app.socialmediables')
+            ->withPivot('user','url')->withTimestamps();
+    }
 
     public function status()
     {

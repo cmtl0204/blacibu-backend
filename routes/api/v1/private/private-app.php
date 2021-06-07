@@ -10,11 +10,16 @@ use App\Http\Controllers\App\ConferenceController;
 use App\Http\Controllers\App\FileController;
 use App\Http\Controllers\App\LocationController;
 use App\Http\Controllers\App\EmailController;
+use App\Http\Controllers\App\SocialmediaController;
 
 Route::get('countries', [LocationController::class, 'getCountries']);
 
 Route::group(['prefix' => 'location'], function () {
     Route::get('get', [LocationController::class, 'getLocations']);
+});
+
+Route::group(['prefix' => 'socialmedia'], function () {
+    Route::get('', [SocialmediaController::class, 'index']);
 });
 
 Route::group(['prefix' => 'image'], function () {
@@ -30,7 +35,8 @@ Route::group(['prefix' => 'file'], function () {
 });
 
 Route::group(['prefix' => 'professionals'], function () {
-    Route::get('get', [ProfessionalController::class, 'getProfessional']);
+    Route::get('', [ProfessionalController::class, 'getProfessional']);
+    Route::put('', [ProfessionalController::class, 'updateProfessional']);
     Route::get('payments', [ProfessionalController::class, 'getPayments']);
     Route::post('payments/file', [ProfessionalController::class, 'uploadPaymentsFiles']);
     Route::put('payments/update', [ProfessionalController::class, 'updatePayment']);

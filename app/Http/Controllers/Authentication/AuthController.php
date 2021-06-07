@@ -82,16 +82,17 @@ class  AuthController extends Controller
         $user->password = $request->input('register.password');
         $user->language()->associate($language);
         $user->identificationType()->associate($identificationType);
+
         $professional = new Professional();
-        $professional->user()->associate($user);
         $professional->country()->associate($country);
         $professional->status()->associate($status);
 
-        DB::transaction(function () use ($user, $professional, $role) {
+//        DB::transaction(function () use ($user, $professional, $role) {
             $user->save();
             $user->roles()->attach($role);
+            $professional->user()->associate($user);
             $professional->save();
-        });
+//        });
         $this->emailVerifiedDirect($user, $role->system()->first()->id);
         return response()->json([
             'data' => $professional,
@@ -101,7 +102,6 @@ class  AuthController extends Controller
                 'code' => '201'
             ]
         ], 201);
-
     }
 
     function handleProviderCallback($driver)

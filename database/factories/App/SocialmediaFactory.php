@@ -2,17 +2,17 @@
 
 namespace Database\Factories\App;
 
-use App\Models\App\Professional;
+use App\Models\App\SocialMedia;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class TeacherFactory extends Factory
+class SocialmediaFactory extends Factory
 {
-    protected $model = Professional::class;
+    protected $model = SocialMedia::class;
 
     public function definition()
     {
         return [
-            'state_id' => 1
+
         ];
     }
 }

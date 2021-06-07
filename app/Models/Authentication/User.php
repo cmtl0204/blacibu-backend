@@ -132,7 +132,7 @@ class User extends Authenticatable implements Auditable, MustVerifyEmail
 
     function identificationType()
     {
-        return $this->belongsTo(Catalogue::class);
+        return $this->belongsTo(Catalogue::class,'identification_type_id');
     }
 
     function images()
@@ -230,6 +230,11 @@ class User extends Authenticatable implements Auditable, MustVerifyEmail
     function setPasswordAttribute($value)
     {
         $this->attributes['password'] = Hash::make($value);
+    }
+
+    function setAvatarAttribute($value)
+    {
+        $this->attributes['avatar'] = 'avatars\\' . strtolower($value);
     }
 
     // Scopes

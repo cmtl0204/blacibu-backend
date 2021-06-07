@@ -12,14 +12,12 @@ class CreateAppAddressTable extends Migration
             $table->id();
 
             $table->foreignId('location_id')
+                ->nullable()
                 ->constrained('app.locations');
 
-            $table->foreignId('sector_id')
-                ->constrained('app.catalogues');
+            $table->string('main_street')->nullable();
 
-            $table->string('main_street');
-
-            $table->string('secondary_street');
+            $table->string('secondary_street')->nullable();
 
             $table->string('number')
                 ->nullable()
