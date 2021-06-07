@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use App\Models\App\Catalogue;
 use App\Models\App\Institution;
 use App\Models\App\Professional;
-use App\Models\App\SocialMedia;
+use App\Models\App\Socialmedia;
 use App\Models\App\Status;
 use App\Models\Authentication\Module;
 use App\Models\Authentication\Permission;
@@ -33,7 +33,7 @@ class AuthenticationSeeder extends Seeder
         $this->createSectorTypeCatalogues();
         $this->createLanguageCatalogues();
         $this->createLocationCatalogues();
-        $this->createSocialMedia();
+        $this->createSocialmedia();
 
         $this->createDocumentTypeCatalogues();
         $this->createDocumentCatalogues();
@@ -894,33 +894,33 @@ class AuthenticationSeeder extends Seeder
         SecurityQuestion::factory()->create(['name' => '¿Cuál es el nombre de su canción favorita?']);
     }
 
-    private function createSocialMedia()
+    private function createSocialmedia()
     {
-        SocialMedia::create([
+        Socialmedia::create([
             'name' => 'FACEBOOK',
             'icon' => 'pi pi-facebook',
         ]);
-        SocialMedia::create([
+        Socialmedia::create([
             'name' => 'YOUTUBE',
             'icon' => 'pi pi-youtube',
         ]);
-        SocialMedia::create([
+        Socialmedia::create([
             'name' => 'TWITTER',
             'icon' => 'pi pi-twitter',
         ]);
-        SocialMedia::create([
+        Socialmedia::create([
             'name' => 'SLACK',
             'icon' => 'pi pi-slack',
         ]);
-        SocialMedia::create([
+        Socialmedia::create([
             'name' => 'GOOGLE',
             'icon' => 'pi pi-google',
         ]);
-        SocialMedia::create([
+        Socialmedia::create([
             'name' => 'GITHUB',
             'icon' => 'pi pi-github',
         ]);
-        SocialMedia::create([
+        Socialmedia::create([
             'name' => 'DISCORD',
             'icon' => 'pi pi-discord',
         ]);
