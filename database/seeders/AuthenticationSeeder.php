@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\App\Catalogue;
 use App\Models\App\Institution;
 use App\Models\App\Professional;
+use App\Models\App\SocialMedia;
 use App\Models\App\Status;
 use App\Models\Authentication\Module;
 use App\Models\Authentication\Permission;
@@ -32,6 +33,7 @@ class AuthenticationSeeder extends Seeder
         $this->createSectorTypeCatalogues();
         $this->createLanguageCatalogues();
         $this->createLocationCatalogues();
+        $this->createSocialMedia();
 
         $this->createDocumentTypeCatalogues();
         $this->createDocumentCatalogues();
@@ -485,8 +487,8 @@ class AuthenticationSeeder extends Seeder
     private function createDocumentCatalogues()
     {
         $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
-        $documentTypeCertified = Catalogue::where('code',$catalogues['catalogue']['document_type']['certified'])
-            ->where('type',$catalogues['catalogue']['document_type']['type'])->first();
+        $documentTypeCertified = Catalogue::where('code', $catalogues['catalogue']['document_type']['certified'])
+            ->where('type', $catalogues['catalogue']['document_type']['type'])->first();
 
         Catalogue::factory()->create([
             'parent_id' => $documentTypeCertified->id,
@@ -529,8 +531,8 @@ class AuthenticationSeeder extends Seeder
     private function createConstancyCatalogues()
     {
         $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
-        $documentTypeCertified = Catalogue::where('code',$catalogues['catalogue']['document_type']['certified'])
-            ->where('type',$catalogues['catalogue']['document_type']['type'])->first();
+        $documentTypeCertified = Catalogue::where('code', $catalogues['catalogue']['document_type']['certified'])
+            ->where('type', $catalogues['catalogue']['document_type']['type'])->first();
         Catalogue::factory()->create([
             'parent_id' => $documentTypeCertified->id,
             'code' => '1',
@@ -560,8 +562,8 @@ class AuthenticationSeeder extends Seeder
     private function createCertificateCatalogues()
     {
         $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
-        $documentTypeCertified = Catalogue::where('code',$catalogues['catalogue']['document_type']['certified'])
-            ->where('type',$catalogues['catalogue']['document_type']['type'])->first();
+        $documentTypeCertified = Catalogue::where('code', $catalogues['catalogue']['document_type']['certified'])
+            ->where('type', $catalogues['catalogue']['document_type']['type'])->first();
         Catalogue::factory()->create([
             'parent_id' => $documentTypeCertified->id,
             'code' => '1',
@@ -591,8 +593,8 @@ class AuthenticationSeeder extends Seeder
     private function createReCertificateCatalogues()
     {
         $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
-        $documentTypeReCertified = Catalogue::where('code',$catalogues['catalogue']['document_type']['recertified'])
-            ->where('type',$catalogues['catalogue']['document_type']['type'])->first();
+        $documentTypeReCertified = Catalogue::where('code', $catalogues['catalogue']['document_type']['recertified'])
+            ->where('type', $catalogues['catalogue']['document_type']['type'])->first();
         Catalogue::factory()->create([
             'parent_id' => $documentTypeReCertified->id,
             'code' => '1',
@@ -628,8 +630,8 @@ class AuthenticationSeeder extends Seeder
     private function createConferenceCatalogues()
     {
         $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
-        $documentTypeCertified = Catalogue::where('code',$catalogues['catalogue']['document_type']['certified'])
-            ->where('type',$catalogues['catalogue']['document_type']['type'])->first();
+        $documentTypeCertified = Catalogue::where('code', $catalogues['catalogue']['document_type']['certified'])
+            ->where('type', $catalogues['catalogue']['document_type']['type'])->first();
         Catalogue::factory()->create([
             'parent_id' => $documentTypeCertified->id,
             'code' => '1',
@@ -665,8 +667,8 @@ class AuthenticationSeeder extends Seeder
     private function createReConferenceCatalogues()
     {
         $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
-        $documentTypeReCertified = Catalogue::where('code',$catalogues['catalogue']['document_type']['recertified'])
-            ->where('type',$catalogues['catalogue']['document_type']['type'])->first();
+        $documentTypeReCertified = Catalogue::where('code', $catalogues['catalogue']['document_type']['recertified'])
+            ->where('type', $catalogues['catalogue']['document_type']['type'])->first();
         Catalogue::factory()->create([
             'parent_id' => $documentTypeReCertified->id,
             'code' => '1',
@@ -890,5 +892,37 @@ class AuthenticationSeeder extends Seeder
         SecurityQuestion::factory()->create(['name' => '¿Cuál es el nombre de su abuela paterna?']);
         SecurityQuestion::factory()->create(['name' => '¿Cuál es su marca de auto favorito?']);
         SecurityQuestion::factory()->create(['name' => '¿Cuál es el nombre de su canción favorita?']);
+    }
+
+    private function createSocialMedia()
+    {
+        SocialMedia::create([
+            'name' => 'FACEBOOK',
+            'icon' => 'pi pi-facebook',
+        ]);
+        SocialMedia::create([
+            'name' => 'YOUTUBE',
+            'icon' => 'pi pi-youtube',
+        ]);
+        SocialMedia::create([
+            'name' => 'TWITTER',
+            'icon' => 'pi pi-twitter',
+        ]);
+        SocialMedia::create([
+            'name' => 'SLACK',
+            'icon' => 'pi pi-slack',
+        ]);
+        SocialMedia::create([
+            'name' => 'GOOGLE',
+            'icon' => 'pi pi-google',
+        ]);
+        SocialMedia::create([
+            'name' => 'GITHUB',
+            'icon' => 'pi pi-github',
+        ]);
+        SocialMedia::create([
+            'name' => 'DISCORD',
+            'icon' => 'pi pi-discord',
+        ]);
     }
 }

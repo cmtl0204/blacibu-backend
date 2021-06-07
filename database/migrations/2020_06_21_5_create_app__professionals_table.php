@@ -12,7 +12,6 @@ class CreateAppProfessionalsTable extends Migration
             $table->id();
 
             $table->foreignId('user_id')
-                ->nullable()
                 ->constrained('authentication.users');
 
             $table->foreignId('status_id')
@@ -33,6 +32,9 @@ class CreateAppProfessionalsTable extends Migration
                 ->nullable();
 
             $table->integer('years_graduated')
+                ->nullable();
+
+            $table->string('nationality')
                 ->nullable();
 
             $table->softDeletes();

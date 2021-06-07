@@ -13,6 +13,7 @@ use App\Models\Authentication\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image as InterventionImage;
 use Maatwebsite\Excel\Facades\Excel;
 
 class  UserController extends Controller
@@ -109,29 +110,50 @@ class  UserController extends Controller
 
     public function uploadAvatar(Request $request)
     {
-        $file = $request->file('file');
-        if ($file) {
-            $user = $request->user();
-            Storage::delete($user->avatar);
+        $avatar = $request->file('avatar');
 
-            $filePath = $file->storeAs('avatars', $user->id . '.' . $file->getClientOriginalExtension(), 'public');
-
-            $user->update(['avatar' => $filePath]);
-            return response()->json([
-                'data' => $user->avatar,
-                'msg' => [
-                    'summary' => 'upload',
-                    'detail' => '',
-                    'code' => '201'
-                ]], 201);
-        } else {
+        if (!$avatar) {
             return response()->json([
                 'data' => null,
                 'msg' => [
-                    'summary' => 'Archivo no valido',
+                    'summary' => 'Imagen no válida',
                     'detail' => 'Intente de nuevo',
                     'code' => '400'
                 ]], 400);
         }
+
+        $user = $request->user();
+        Storage::disk('public')->delete($user->avatar);
+        $name = $user->id . '.' . strtolower($avatar->getClientOriginalExtension());
+        $filePath = storage_path('app\public\avatars\\') . $name;
+
+        $avatar = InterventionImage::make($avatar);
+        $avatar->widen(300, function ($constraint) {
+            $constraint->upsize();
+        })->save($filePath, 75);
+
+        $user->avatar = $name;
+        $user->save();
+
+        return response()->json([
+            'data' => $user->avatar,
+            'msg' => [
+                'summary' => 'Su foto fue actualizada',
+                'detail' => '',
+                'code' => '201'
+            ]], 201);
+    }
+
+    private function uploadSmallImage($image, $name)
+    {
+        $path = 'avatars\\' . $name . '-sm.jpg';
+        $image->widen(300, function ($constraint) {
+            $constraint->upsize();
+        })->save($path, 75);
+
+        $path = $this->storagePath . $name . '\\' . $name . '-sm.webp';
+        $image->widen(300, function ($constraint) {
+            $constraint->upsize();
+        })->save($path, 75);
     }
 }

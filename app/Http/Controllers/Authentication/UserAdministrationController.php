@@ -37,7 +37,6 @@ class  UserAdministrationController extends Controller
                 ->where(function ($query) use ($search) {
                     $query->email($search);
                     $query->lastname($search);
-                    $query->firstname($search);
                     $query->identification($search);
                     $query->name($search);
                 })

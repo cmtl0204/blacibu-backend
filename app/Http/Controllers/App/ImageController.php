@@ -114,7 +114,7 @@ class ImageController extends Controller
         $image->state = false;
         $image->save();
 
-        // Elimina los archivos del servidoir
+        // Elimina los archivos del servidor
         Storage::deleteDirectory('images\\' . $imageId);
 
         return response()->json([
