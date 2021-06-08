@@ -27,6 +27,9 @@ class CreateAppPaymentsTable extends Migration
             $table->string('transfer_number')
                 ->nullable();
 
+            $table->string('observations')
+                ->nullable();
+
             $table->softDeletes();
             $table->timestamps();
         });

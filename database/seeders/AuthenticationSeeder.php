@@ -852,7 +852,8 @@ class AuthenticationSeeder extends Seeder
     {
         foreach (User::all() as $user) {
             Professional::factory()->create([
-                'user_id' => $user->id
+                'user_id' => $user->id,
+                'status_id' => 8,
             ]);
         }
     }

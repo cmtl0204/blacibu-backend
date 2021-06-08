@@ -50,6 +50,9 @@ class CreateAppConferencesTable extends Migration
             $table->string('function')
                 ->nullable();
 
+            $table->string('observations')
+                ->nullable();
+
             $table->softDeletes();
             $table->timestamps();
         });
