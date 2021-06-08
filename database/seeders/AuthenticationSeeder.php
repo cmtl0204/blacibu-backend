@@ -181,10 +181,15 @@ class AuthenticationSeeder extends Seeder
                 ->where('system_id', $system->id)
                 ->first()
             );
+            $role->permissions()->attach(Permission::
+            where('route_id', 2)
+                ->where('system_id', $system->id)
+                ->first()
+            );
         }
 
         $roleAdmin = Role::find(1);
-        for ($i = 2; $i <= 3; $i++) {
+        for ($i = 3; $i <= 4; $i++) {
             $roleAdmin->permissions()->attach(Permission::
             where('route_id', $i)
                 ->where('system_id', $system->id)
@@ -193,7 +198,7 @@ class AuthenticationSeeder extends Seeder
         }
 
         $roleCerticate = Role::find(2);
-        for ($i = 4; $i <= 7; $i++) {
+        for ($i = 5; $i <= 7; $i++) {
             $roleCerticate->permissions()->attach(Permission::
             where('route_id', $i)
                 ->where('system_id', $system->id)
@@ -749,7 +754,15 @@ class AuthenticationSeeder extends Seeder
             'logo' => 'routes/route4.png',
             'order' => 1
         ]);
-
+        Route::factory()->create([
+            'uri' => $catalogues['route']['professional']['payment'],
+            'module_id' => $moduleApp->id,
+            'type_id' => $menuNormal->id,
+            'status_id' => $statusAvailable->id,
+            'name' => 'Constancia de pago',
+            'logo' => 'routes/route8.png',
+            'order' => 2
+        ]);
         // Administrator
         Route::factory()->create([
             'uri' => $catalogues['route']['administrator']['administration'],
@@ -779,7 +792,7 @@ class AuthenticationSeeder extends Seeder
             'status_id' => $statusAvailable->id,
             'name' => 'Documentos Profesionales',
             'logo' => 'routes/route5.png',
-            'order' => 2
+            'order' => 3
         ]);
         Route::factory()->create([
             'uri' => $catalogues['route']['professional']['conference'],
@@ -788,7 +801,7 @@ class AuthenticationSeeder extends Seeder
             'status_id' => $statusAvailable->id,
             'name' => 'Conferencias y Trabajos',
             'logo' => 'routes/route7.png',
-            'order' => 3
+            'order' => 4
         ]);
         Route::factory()->create([
             'uri' => $catalogues['route']['professional']['certificate'],
@@ -797,17 +810,9 @@ class AuthenticationSeeder extends Seeder
             'status_id' => $statusAvailable->id,
             'name' => 'Certificados',
             'logo' => 'routes/route6.png',
-            'order' => 4
-        ]);
-        Route::factory()->create([
-            'uri' => $catalogues['route']['professional']['payment'],
-            'module_id' => $moduleApp->id,
-            'type_id' => $menuNormal->id,
-            'status_id' => $statusAvailable->id,
-            'name' => 'Constancia de pago',
-            'logo' => 'routes/route8.png',
             'order' => 5
         ]);
+
 
         // Routes Recertificate
         Route::factory()->create([

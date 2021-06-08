@@ -25,7 +25,7 @@ class CreateAppDocumentsTable extends Migration
 
             $table->text('aditional_information')
                 ->nullable();
-            $table->string('observations')
+            $table->string('observation')
                 ->nullable();
 
             $table->softDeletes();

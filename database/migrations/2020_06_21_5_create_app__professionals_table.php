@@ -37,6 +37,9 @@ class CreateAppProfessionalsTable extends Migration
             $table->string('nationality')
                 ->nullable();
 
+            $table->string('observation')
+                ->nullable();
+
             $table->softDeletes();
             $table->timestamps();
         });

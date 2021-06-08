@@ -159,6 +159,7 @@ class  UserAdministrationController extends Controller
         $status = Status::where('code', 'ACCEPTED')->first();
         $professional = Professional::find($request->input('professional_id'));
         $professional->status()->associate($status);
+        $professional->observation = null;
         $professional->save();
         return response()->json([
             'data' => $professional,
@@ -192,6 +193,7 @@ class  UserAdministrationController extends Controller
         }
 
         $model->status()->associate($status);
+        $model->observation = null;
         $model->save();
 
         return response()->json([
@@ -209,6 +211,7 @@ class  UserAdministrationController extends Controller
         $status = Status::where('code', 'REJECTED')->first();
         $professional = Professional::find($request->input('professional_id'));
         $professional->status()->associate($status);
+        $professional->observation = $request->input('observation');
         $professional->save();
         return response()->json([
             'data' => $professional,
@@ -241,7 +244,7 @@ class  UserAdministrationController extends Controller
                 break;
         }
         $model->status()->associate($status);
-        $model->observations = $request->input('observations');
+        $model->observation = $request->input('observation');
         $model->save();
 
         return response()->json([

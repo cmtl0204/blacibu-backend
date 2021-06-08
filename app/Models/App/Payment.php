@@ -27,6 +27,7 @@ class Payment extends Model implements Auditable
         'bank',
         'date',
         'transfer_number',
+        'observation',
     ];
     protected $cascadeDeletes = ['file'];
 

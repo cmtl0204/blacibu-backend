@@ -47,7 +47,7 @@ class CreateAppCertificatesTable extends Migration
             $table->string('in_quality')
                 ->nullable();
 
-            $table->string('observations')
+            $table->string('observation')
                 ->nullable();
 
             $table->softDeletes();
