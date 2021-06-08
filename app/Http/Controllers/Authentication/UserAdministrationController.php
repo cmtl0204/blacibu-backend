@@ -11,6 +11,7 @@ use App\Models\App\Certificate;
 use App\Models\App\Conference;
 use App\Models\App\Document;
 use App\Models\App\Location;
+use App\Models\App\Payment;
 use App\Models\App\Professional;
 use App\Models\Authentication\PassworReset;
 use App\Models\Authentication\Role;
@@ -92,17 +93,10 @@ class  UserAdministrationController extends Controller
         $users = User::whereHas('roles', function ($role) use ($system, $selectedRole) {
             $role->where('code', '=', $selectedRole)->where('system_id', '=', $system);
         })
-            ->with(['roles' => function ($roles) use ($request) {
-                $roles
-                    ->with(['permissions' => function ($permissions) {
-                        $permissions->with(['route' => function ($route) {
-                            $route->with('module')->with('type')->with('status');
-                        }])->with('institution');
-                    }]);
-            }])->with(['professional' => function ($professional) {
+            ->with(['professional' => function ($professional) {
                 $professional->with('status');
-            }])
-            ->paginate($request->input('per_page'));
+            }]);
+
         if ($request->has('search')) {
             $users = $users->where(function ($query) use ($search) {
                 $query->email($search);
@@ -111,7 +105,7 @@ class  UserAdministrationController extends Controller
                 $query->identification($search);
             });
         }
-
+        $users = $users->orderBy('lastname')->paginate($request->input('per_page'));
         if ($users->count() === 0) {
             return response()->json([
                 'data' => null,
@@ -123,6 +117,25 @@ class  UserAdministrationController extends Controller
             ], 404);
         }
         return response()->json($users, 200);
+    }
+
+    public function getProfessional($id)
+    {
+        $professional = Professional::where('id', $id)->with(['user' => function ($user) {
+            $user->with(['identificationType'])->with(['address' => function ($address) {
+                $address->with('location');
+            }]);
+        }])->with(['status', 'socialmedia', 'country'])->with(['payment' => function ($payment) {
+            $payment->with(['file', 'status']);
+        }])->first();
+
+        return response()->json([
+            'data' => $professional,
+            'msg' => [
+                'summary' => 'success',
+                'detail' => '',
+                'code' => '200'
+            ]], 200);
     }
 
     public function reviseProfessional(Request $request)
@@ -146,6 +159,7 @@ class  UserAdministrationController extends Controller
         $status = Status::where('code', 'ACCEPTED')->first();
         $professional = Professional::find($request->input('professional_id'));
         $professional->status()->associate($status);
+        $professional->observation = null;
         $professional->save();
         return response()->json([
             'data' => $professional,
@@ -173,9 +187,13 @@ class  UserAdministrationController extends Controller
             case 'CERTIFICATE':
                 $model = Certificate::find($request->input('id'));
                 break;
+            case 'PAYMENT':
+                $model = Payment::find($request->input('id'));
+                break;
         }
 
         $model->status()->associate($status);
+        $model->observation = null;
         $model->save();
 
         return response()->json([
@@ -193,6 +211,7 @@ class  UserAdministrationController extends Controller
         $status = Status::where('code', 'REJECTED')->first();
         $professional = Professional::find($request->input('professional_id'));
         $professional->status()->associate($status);
+        $professional->observation = $request->input('observation');
         $professional->save();
         return response()->json([
             'data' => $professional,
@@ -220,8 +239,12 @@ class  UserAdministrationController extends Controller
             case 'CERTIFICATE':
                 $model = Certificate::find($request->input('id'));
                 break;
+            case 'PAYMENT':
+                $model = Payment::find($request->input('id'));
+                break;
         }
         $model->status()->associate($status);
+        $model->observation = $request->input('observation');
         $model->save();
 
         return response()->json([
@@ -233,6 +256,7 @@ class  UserAdministrationController extends Controller
             ]
         ], 200);
     }
+
     public function getCertifiedDocuments(Request $request)
     {
         $professional = Professional::find($request->input('professional_id'));

@@ -19,12 +19,16 @@ class CreateAppPaymentsTable extends Migration
                 ->nullable()
                 ->constrained('app.status');
 
-            $table->string('bank');
+            $table->string('bank')
+                ->nullable();
 
             $table->date('date')
                 ->nullable();
 
             $table->string('transfer_number')
+                ->nullable();
+
+            $table->string('observation')
                 ->nullable();
 
             $table->softDeletes();

@@ -52,7 +52,7 @@ class DocumentController extends Controller
         $type = Catalogue::find($request->input('type'));
         $status = Status::firstWhere('code', $catalogues['status']['in_revision']);
         $document = new Document();
-        $document->aditional_information = $request->input('document.aditional_information');
+        $document->aditional_information = $request->input('aditional_information');
         $document->professional()->associate($professional);
         $document->type()->associate($type);
         $document->status()->associate($status);

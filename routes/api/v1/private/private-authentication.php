@@ -57,6 +57,7 @@ Route::prefix('user')->group(function () {
 
 //User Administration
 Route::prefix('user-admin')->group(function () {
+    Route::get('professional/{professional}', [UserAdministrationController::class, 'getProfessional']);
     Route::get('professionals', [UserAdministrationController::class, 'getProfessionals']);
     Route::get('professionals/certified-documents', [UserAdministrationController::class, 'getCertifiedDocuments']);
     Route::get('professionals/re-certified-documents', [UserAdministrationController::class, 'getReCertifiedDocuments']);

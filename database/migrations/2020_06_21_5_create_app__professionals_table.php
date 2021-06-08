@@ -25,7 +25,7 @@ class CreateAppProfessionalsTable extends Migration
             $table->string('membership_number')
                 ->nullable();
 
-            $table->date('certified_date')
+            $table->integer('certified_date')
                 ->nullable();
 
             $table->string('degree_time')
@@ -35,6 +35,9 @@ class CreateAppProfessionalsTable extends Migration
                 ->nullable();
 
             $table->string('nationality')
+                ->nullable();
+
+            $table->string('observation')
                 ->nullable();
 
             $table->softDeletes();

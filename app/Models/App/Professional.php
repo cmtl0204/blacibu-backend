@@ -69,6 +69,11 @@ class Professional extends Model implements Auditable
         return $this->hasMany(Payment::class);
     }
 
+    public function payment()
+    {
+        return $this->hasOne(Payment::class);
+    }
+
     public function images()
     {
         return $this->morphMany(Image::class, 'imageable');

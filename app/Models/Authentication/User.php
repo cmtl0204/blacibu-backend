@@ -248,7 +248,7 @@ class User extends Authenticatable implements Auditable, MustVerifyEmail
     function scopeLastname($query, $lastname)
     {
         if ($lastname) {
-            return $query->orWhere('astname', 'ILIKE', "%$lastname%");
+            return $query->orWhere('lastname', 'ILIKE', "%$lastname%");
         }
     }
 

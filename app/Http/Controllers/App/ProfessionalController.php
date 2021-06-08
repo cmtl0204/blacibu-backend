@@ -9,6 +9,8 @@ use App\Models\App\Catalogue;
 use App\Models\App\File;
 use App\Models\App\Location;
 use App\Models\App\Payment;
+use App\Models\App\Status;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -58,9 +60,9 @@ class ProfessionalController extends Controller
 
         if ($request->input('professional.socialmedia')) {
             $professional->socialmedia()->detach();
-            foreach ($request->input('professional.socialmedia') as $socialmedia){
+            foreach ($request->input('professional.socialmedia') as $socialmedia) {
                 $professional->socialmedia()->attach($socialmedia['socialmedia']['id'],
-                    ['user'=>$socialmedia['user']]);
+                    ['user' => $socialmedia['user']]);
             }
 
         }
@@ -87,7 +89,7 @@ class ProfessionalController extends Controller
 
     public function getProfessional(Request $request)
     {
-        $professional = $request->user()->professional()->with(['country', 'status','socialmedia'])->with(['user' => function ($user) {
+        $professional = $request->user()->professional()->with(['country', 'status', 'socialmedia'])->with(['user' => function ($user) {
             $user->with(['identificationType', 'language'])->with(['address' => function ($address) {
                 $address->with('location');
             }]);
@@ -106,7 +108,7 @@ class ProfessionalController extends Controller
     {
         $professional = $request->user()->professional()->first();
 
-        $payments = $professional->payments()->with('file')->get();
+        $payments = $professional->payments()->with(['file', 'status'])->get();
 
         return response()->json([
             'data' => $payments,
@@ -119,6 +121,8 @@ class ProfessionalController extends Controller
 
     function uploadPaymentsFiles(UploadFileRequest $request)
     {
+        $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
+        $status = Status::firstWhere('code', $catalogues['status']['in_revision']);
         $paymentData = json_decode($request->input('payment'));
         $professional = $request->user();
         if ($paymentData->file) {
@@ -130,6 +134,7 @@ class ProfessionalController extends Controller
         $payment->bank = $paymentData->bank;
         $payment->date = $paymentData->date;
         $payment->transfer_number = $paymentData->transfer_number;
+        $payment->status()->associate($status);
         $payment->professional()->associate($professional);
         $payment->save();
 
@@ -138,10 +143,15 @@ class ProfessionalController extends Controller
 
     function updatePayment(Request $request)
     {
-        $payment = Payment::find($request->input('payment.id'));
+        $professional = $request->user()->professional()->first();
+        $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
+        $status = Status::firstWhere('code', $catalogues['status']['in_revision']);
+        $payment = empty($request->input('payment.id')) ? new Payment() : Payment::find($request->input('payment.id'));
         $payment->bank = $request->input('payment.bank');
         $payment->date = $request->input('payment.date');
         $payment->transfer_number = $request->input('payment.transfer_number');
+        $payment->status()->associate($status);
+        $payment->professional()->associate($professional);
         $payment->save();
 
         return response()->json([
