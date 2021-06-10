@@ -12,6 +12,7 @@ use App\Models\Authentication\Permission;
 use App\Models\Authentication\Role;
 use App\Models\Authentication\Route;
 use App\Models\Authentication\SecurityQuestion;
+use App\Models\Authentication\Shortcut;
 use App\Models\Authentication\System;
 use App\Models\Authentication\User;
 use Illuminate\Database\Seeder;
@@ -61,11 +62,13 @@ class AuthenticationSeeder extends Seeder
         // Permisos
         $this->createPermissions();
 
-        // Roles con permisos
-        $this->createRolePermissions();
 
         // Users
         $this->createUsers();
+
+        // Roles con permisos
+        $this->createRolePermissions();
+        $this->createShortcuts();
 
         // Users
         $this->createProfessionals();
@@ -86,7 +89,7 @@ class AuthenticationSeeder extends Seeder
         $statysAvailable = Status::firstWhere('code', $catalogues['status']['available']);
         System::factory()->create([
             'code' => $catalogues['system']['code'],
-            'name' => 'Sistema de Cirugía y Traumatología Bucomaxilofacial',
+            'name' => 'Sistema de Cirugia y Traumatologia Bucomaxilofacial',
             'acronym' => 'BLACIBU',
             'version' => '1.2.3',
             'redirect' => 'http://localhost:4200',
@@ -129,7 +132,7 @@ class AuthenticationSeeder extends Seeder
         ]);
         Status::factory()->create([
             'code' => $catalogues['status']['in_revision'],
-            'name' => 'EN REVISIÓN',
+            'name' => 'EN REVISIoN',
         ]);
     }
 
@@ -181,15 +184,10 @@ class AuthenticationSeeder extends Seeder
                 ->where('system_id', $system->id)
                 ->first()
             );
-            $role->permissions()->attach(Permission::
-            where('route_id', 2)
-                ->where('system_id', $system->id)
-                ->first()
-            );
         }
 
         $roleAdmin = Role::find(1);
-        for ($i = 3; $i <= 4; $i++) {
+        for ($i = 2; $i <= 3; $i++) {
             $roleAdmin->permissions()->attach(Permission::
             where('route_id', $i)
                 ->where('system_id', $system->id)
@@ -198,7 +196,7 @@ class AuthenticationSeeder extends Seeder
         }
 
         $roleCerticate = Role::find(2);
-        for ($i = 5; $i <= 7; $i++) {
+        for ($i = 4; $i <= 6; $i++) {
             $roleCerticate->permissions()->attach(Permission::
             where('route_id', $i)
                 ->where('system_id', $system->id)
@@ -207,13 +205,40 @@ class AuthenticationSeeder extends Seeder
         }
 
         $roleReCerticate = Role::find(3);
-        for ($i = 8; $i <= 10; $i++) {
+        for ($i = 7; $i <= 9; $i++) {
             $roleReCerticate->permissions()->attach(Permission::
             where('route_id', $i)
                 ->where('system_id', $system->id)
                 ->first()
             );
         }
+    }
+
+    private function createShortcuts()
+    {
+        Shortcut::create([
+            'user_id' => 1,
+            'role_id' => 1,
+            'permission_id' => 1,
+            'name' => 'PERSONAL INFORMATION',
+            'image' => 'routes/route4.png',
+        ]);
+
+        Shortcut::create([
+            'user_id' => 1,
+            'role_id' => 1,
+            'permission_id' => 2,
+            'name' => 'USER ADMINISTRATION',
+            'image' => 'routes/route1.png',
+        ]);
+
+        Shortcut::create([
+            'user_id' => 1,
+            'role_id' => 1,
+            'permission_id' => 3,
+            'name' => 'PROFESSIONAL VALIDATION',
+            'image' => 'routes/route2.png',
+        ]);
     }
 
     private function createInstitutions()
@@ -307,7 +332,7 @@ class AuthenticationSeeder extends Seeder
         $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
         Catalogue::factory()->create([
             'code' => $catalogues['catalogue']['identification_type']['identification'],
-            'name' => 'IDENTIFICACIÓN',
+            'name' => 'IDENTIFICACIoN',
             'type' => $catalogues['catalogue']['identification_type']['type'],
         ]);
         Catalogue::factory()->create([
@@ -427,7 +452,7 @@ class AuthenticationSeeder extends Seeder
         ]);
         Catalogue::factory()->create([
             'code' => $catalogues['catalogue']['civil_status']['union'],
-            'name' => 'UNIÓN DE HECHO',
+            'name' => 'UNIoN DE HECHO',
             'type' => $catalogues['catalogue']['civil_status']['type']
         ]);
     }
@@ -453,13 +478,13 @@ class AuthenticationSeeder extends Seeder
     {
         $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
         Catalogue::factory()->create([
-            'code' => '2',
+            'code' => 'es',
             'name' => 'ESPAÑOL',
             'type' => $catalogues['catalogue']['language']['type'],
         ]);
         Catalogue::factory()->create([
-            'code' => '2',
-            'name' => 'PORTUGUÉS',
+            'code' => 'br',
+            'name' => 'PORTUGUeS',
             'type' => $catalogues['catalogue']['language']['type'],
         ]);
     }
@@ -469,7 +494,7 @@ class AuthenticationSeeder extends Seeder
         $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
         Catalogue::factory()->create([
             'code' => $catalogues['catalogue']['location']['country'],
-            'name' => 'PAÍS',
+            'name' => 'PAiS',
             'type' => $catalogues['catalogue']['location']['type'],
         ]);
     }
@@ -498,37 +523,37 @@ class AuthenticationSeeder extends Seeder
         Catalogue::factory()->create([
             'parent_id' => $documentTypeCertified->id,
             'code' => '1',
-            'name' => 'Título universitario de odontólogo.',
+            'name' => 'Titulo universitario de odontologo',
             'type' => $catalogues['catalogue']['document']['type'],
         ]);
         Catalogue::factory()->create([
             'parent_id' => $documentTypeCertified->id,
             'code' => '2',
-            'name' => 'Cédula, matrícula o colegiatura oficial de odontólogo.',
+            'name' => 'Cedula, matricula o colegiatura oficial de odontologo',
             'type' => $catalogues['catalogue']['document']['type'],
         ]);
         Catalogue::factory()->create([
             'parent_id' => $documentTypeCertified->id,
             'code' => '3',
-            'name' => 'Título de especialista en cirugía bucomaxilofacial.',
+            'name' => 'Titulo de especialista en cirugia bucomaxilofacial',
             'type' => $catalogues['catalogue']['document']['type'],
         ]);
         Catalogue::factory()->create([
             'parent_id' => $documentTypeCertified->id,
             'code' => '4',
-            'name' => 'Cédula o matrícula oficial en cirugía bucomaxilofacial.',
+            'name' => 'Cedula o matricula oficial en cirugia bucomaxilofacial',
             'type' => $catalogues['catalogue']['document']['type'],
         ]);
         Catalogue::factory()->create([
             'parent_id' => $documentTypeCertified->id,
             'code' => '5',
-            'name' => 'Cédula o matrícula oficial en cirugía bucomaxilofacial.',
+            'name' => 'Cedula o matricula oficial en cirugia bucomaxilofacial',
             'type' => $catalogues['catalogue']['document']['type'],
         ]);
         Catalogue::factory()->create([
             'parent_id' => $documentTypeCertified->id,
             'code' => '6',
-            'name' => 'Constancia de miembro activo de su sociedad o asociación.',
+            'name' => 'Constancia de miembro activo de su sociedad o asociacion',
             'type' => $catalogues['catalogue']['document']['type'],
         ]);
     }
@@ -541,25 +566,25 @@ class AuthenticationSeeder extends Seeder
         Catalogue::factory()->create([
             'parent_id' => $documentTypeCertified->id,
             'code' => '1',
-            'name' => 'Constancia de miembro activo expedida por la Sociedad, Asociación o Entidad Nacional de su país.',
+            'name' => 'Constancia de miembro activo expedida por la Sociedad, Asociacion o Entidad Nacional de su pais',
             'type' => $catalogues['catalogue']['constancy']['type'],
         ]);
         Catalogue::factory()->create([
             'parent_id' => $documentTypeCertified->id,
             'code' => '2',
-            'name' => 'Curriculum vitae (antecedentes últimos 6 años).',
+            'name' => 'Curriculum vitae (antecedentes ultimos 6 años)',
             'type' => $catalogues['catalogue']['constancy']['type'],
         ]);
         Catalogue::factory()->create([
             'parent_id' => $documentTypeCertified->id,
             'code' => '3',
-            'name' => 'Constancia de práctica privada exclusiva de la especialidad representada en número de años.',
+            'name' => 'Constancia de practica privada exclusiva de la especialidad representada en numero de años',
             'type' => $catalogues['catalogue']['constancy']['type'],
         ]);
         Catalogue::factory()->create([
             'parent_id' => $documentTypeCertified->id,
             'code' => '4',
-            'name' => 'Distinciones, premios y reconocimientos especiales en la especialidad.',
+            'name' => 'Distinciones, premios y reconocimientos especiales en la especialidad',
             'type' => $catalogues['catalogue']['constancy']['type'],
         ]);
     }
@@ -572,25 +597,25 @@ class AuthenticationSeeder extends Seeder
         Catalogue::factory()->create([
             'parent_id' => $documentTypeCertified->id,
             'code' => '1',
-            'name' => 'Certificados de asistencia cursos y congresos afines a la especialidad avalados por Alacibu.',
+            'name' => 'Certificados de asistencia cursos y congresos afines a la especialidad avalados por Alacibu',
             'type' => $catalogues['catalogue']['certificate']['type'],
         ]);
         Catalogue::factory()->create([
             'parent_id' => $documentTypeCertified->id,
             'code' => '2',
-            'name' => 'Certificados de asistencia cursos y congresos afines a la especialidad no avalados por Alacibu.',
+            'name' => 'Certificados de asistencia cursos y congresos afines a la especialidad no avalados por Alacibu',
             'type' => $catalogues['catalogue']['certificate']['type'],
         ]);
         Catalogue::factory()->create([
             'parent_id' => $documentTypeCertified->id,
             'code' => '3',
-            'name' => 'Certificados o diplomas de actividades académicas.',
+            'name' => 'Certificados o diplomas de actividades academicas',
             'type' => $catalogues['catalogue']['certificate']['type'],
         ]);
         Catalogue::factory()->create([
             'parent_id' => $documentTypeCertified->id,
             'code' => '4',
-            'name' => 'Certificados o diplomas de actividades asistenciales.',
+            'name' => 'Certificados o diplomas de actividades asistenciales',
             'type' => $catalogues['catalogue']['certificate']['type'],
         ]);
     }
@@ -603,31 +628,31 @@ class AuthenticationSeeder extends Seeder
         Catalogue::factory()->create([
             'parent_id' => $documentTypeReCertified->id,
             'code' => '1',
-            'name' => 'Certificados o diplomas de actividades académicas y/o actividades asistenciales.',
+            'name' => 'Certificados o diplomas de actividades academicas y/o actividades asistenciales',
             'type' => $catalogues['catalogue']['recertificate']['type'],
         ]);
         Catalogue::factory()->create([
             'parent_id' => $documentTypeReCertified->id,
             'code' => '2',
-            'name' => 'Trabajos especiales de grado y artículos científicos publicados.',
+            'name' => 'Trabajos especiales de grado y articulos cientificos publicados',
             'type' => $catalogues['catalogue']['recertificate']['type'],
         ]);
         Catalogue::factory()->create([
             'parent_id' => $documentTypeReCertified->id,
             'code' => '3',
-            'name' => 'Actividad como editor o revisor de publicaciones científicas.',
+            'name' => 'Actividad como editor o revisor de publicaciones cientificas',
             'type' => $catalogues['catalogue']['recertificate']['type'],
         ]);
         Catalogue::factory()->create([
             'parent_id' => $documentTypeReCertified->id,
             'code' => '4',
-            'name' => 'Certificados de asistencia a simposium, cursos o congresos de la especialidad.',
+            'name' => 'Certificados de asistencia a simposium, cursos o congresos de la especialidad',
             'type' => $catalogues['catalogue']['recertificate']['type'],
         ]);
         Catalogue::factory()->create([
             'parent_id' => $documentTypeReCertified->id,
             'code' => '5',
-            'name' => 'Certificados de asistencia a simposio, cursos y congresos no pertenecientes a la especialidad.',
+            'name' => 'Certificados de asistencia a simposio, cursos y congresos no pertenecientes a la especialidad',
             'type' => $catalogues['catalogue']['recertificate']['type'],
         ]);
     }
@@ -640,31 +665,31 @@ class AuthenticationSeeder extends Seeder
         Catalogue::factory()->create([
             'parent_id' => $documentTypeCertified->id,
             'code' => '1',
-            'name' => 'Conferencias presentadas con aval académico de Alacibu.',
+            'name' => 'Conferencias presentadas con aval academico de Alacibu',
             'type' => $catalogues['catalogue']['conference']['type'],
         ]);
         Catalogue::factory()->create([
             'parent_id' => $documentTypeCertified->id,
             'code' => '2',
-            'name' => 'Conferencias presentadas sin aval académico de Alacibu.',
+            'name' => 'Conferencias presentadas sin aval academico de Alacibu',
             'type' => $catalogues['catalogue']['conference']['type'],
         ]);
         Catalogue::factory()->create([
             'parent_id' => $documentTypeCertified->id,
             'code' => '3',
-            'name' => 'Trabajos presentados con aval académico de Alacibu.',
+            'name' => 'Trabajos presentados con aval academico de Alacibu',
             'type' => $catalogues['catalogue']['conference']['type'],
         ]);
         Catalogue::factory()->create([
             'parent_id' => $documentTypeCertified->id,
             'code' => '4',
-            'name' => 'Trabajos presentados sin aval académico de Alacibu.',
+            'name' => 'Trabajos presentados sin aval academico de Alacibu',
             'type' => $catalogues['catalogue']['conference']['type'],
         ]);
         Catalogue::factory()->create([
             'parent_id' => $documentTypeCertified->id,
             'code' => '5',
-            'name' => 'Trabajos publicados.',
+            'name' => 'Trabajos publicados',
             'type' => $catalogues['catalogue']['conference']['type'],
         ]);
     }
@@ -677,25 +702,25 @@ class AuthenticationSeeder extends Seeder
         Catalogue::factory()->create([
             'parent_id' => $documentTypeReCertified->id,
             'code' => '1',
-            'name' => 'Conferencias nacionales e internacionales.',
+            'name' => 'Conferencias nacionales e internacionales',
             'type' => $catalogues['catalogue']['reconference']['type'],
         ]);
         Catalogue::factory()->create([
             'parent_id' => $documentTypeReCertified->id,
             'code' => '2',
-            'name' => 'Conferencias nacionales e internacionales presentadas en CIALACIBU.',
+            'name' => 'Conferencias nacionales e internacionales presentadas en CIALACIBU',
             'type' => $catalogues['catalogue']['reconference']['type'],
         ]);
         Catalogue::factory()->create([
             'parent_id' => $documentTypeReCertified->id,
             'code' => '3',
-            'name' => 'Afiliación a asociaciones odontológicas de la especialidad nacionales y en el extranjero.',
+            'name' => 'Afiliacion a asociaciones odontologicas de la especialidad nacionales y en el extranjero',
             'type' => $catalogues['catalogue']['reconference']['type'],
         ]);
         Catalogue::factory()->create([
             'parent_id' => $documentTypeReCertified->id,
             'code' => '4',
-            'name' => 'Colaboraciones académicas realizadas para el BLACIBU.',
+            'name' => 'Colaboraciones academicas realizadas para el BLACIBU',
             'type' => $catalogues['catalogue']['reconference']['type'],
         ]);
     }
@@ -724,6 +749,7 @@ class AuthenticationSeeder extends Seeder
         Module::factory()->create([
             'code' => $catalogues['module']['authentication'],
             'name' => 'AUTHENTICATION',
+            'icon' => 'pi pi-users',
             'system_id' => $system->id,
             'status_id' => $statusAvailable->id,
         ]);
@@ -731,6 +757,7 @@ class AuthenticationSeeder extends Seeder
         Module::factory()->create([
             'code' => $catalogues['module']['app'],
             'name' => 'APP',
+            'icon' => 'pi pi-microsoft',
             'system_id' => $system->id,
             'status_id' => $statusAvailable->id,
         ]);
@@ -750,26 +777,26 @@ class AuthenticationSeeder extends Seeder
             'module_id' => $moduleApp->id,
             'type_id' => $menuNormal->id,
             'status_id' => $statusAvailable->id,
-            'name' => 'Información Personal',
+            'name' => 'PERSONAL INFORMATION',
             'logo' => 'routes/route4.png',
             'order' => 1
         ]);
-        Route::factory()->create([
-            'uri' => $catalogues['route']['professional']['payment'],
-            'module_id' => $moduleApp->id,
-            'type_id' => $menuNormal->id,
-            'status_id' => $statusAvailable->id,
-            'name' => 'Constancia de pago',
-            'logo' => 'routes/route8.png',
-            'order' => 2
-        ]);
+//        Route::factory()->create([
+//            'uri' => $catalogues['route']['professional']['payment'],
+//            'module_id' => $moduleApp->id,
+//            'type_id' => $menuNormal->id,
+//            'status_id' => $statusAvailable->id,
+//            'name' => 'Constancia de pago',
+//            'logo' => 'routes/route8.png',
+//            'order' => 2
+//        ]);
         // Administrator
         Route::factory()->create([
             'uri' => $catalogues['route']['administrator']['administration'],
             'module_id' => $moduleAuthentication->id,
             'type_id' => $menuNormal->id,
             'status_id' => $statusAvailable->id,
-            'name' => 'Administración de Usuarios',
+            'name' => 'USERS ADMINISTRATION',
             'logo' => 'routes/route1.png',
             'order' => 2
         ]);
@@ -778,7 +805,7 @@ class AuthenticationSeeder extends Seeder
             'module_id' => $moduleAuthentication->id,
             'type_id' => $menuNormal->id,
             'status_id' => $statusAvailable->id,
-            'name' => 'Validación de Documentos',
+            'name' => 'DOCUMENTS VALIDATION',
             'logo' => 'routes/route2.png',
             'order' => 3
         ]);
@@ -790,7 +817,7 @@ class AuthenticationSeeder extends Seeder
             'module_id' => $moduleApp->id,
             'type_id' => $menuNormal->id,
             'status_id' => $statusAvailable->id,
-            'name' => 'Documentos Profesionales',
+            'name' => 'PROFESSIONALS DOCUEMETNS',
             'logo' => 'routes/route5.png',
             'order' => 3
         ]);
@@ -799,7 +826,7 @@ class AuthenticationSeeder extends Seeder
             'module_id' => $moduleApp->id,
             'type_id' => $menuNormal->id,
             'status_id' => $statusAvailable->id,
-            'name' => 'Conferencias y Trabajos',
+            'name' => 'CONFERENCES AND WORKS',
             'logo' => 'routes/route7.png',
             'order' => 4
         ]);
@@ -808,7 +835,7 @@ class AuthenticationSeeder extends Seeder
             'module_id' => $moduleApp->id,
             'type_id' => $menuNormal->id,
             'status_id' => $statusAvailable->id,
-            'name' => 'Certificados',
+            'name' => 'CERTIFICATES',
             'logo' => 'routes/route6.png',
             'order' => 5
         ]);
@@ -820,7 +847,7 @@ class AuthenticationSeeder extends Seeder
             'module_id' => $moduleApp->id,
             'type_id' => $menuNormal->id,
             'status_id' => $statusAvailable->id,
-            'name' => 'Constancias',
+            'name' => 'CONSTANCES',
             'logo' => 'routes/route9.png',
             'order' => 2
         ]);
@@ -829,7 +856,7 @@ class AuthenticationSeeder extends Seeder
             'module_id' => $moduleApp->id,
             'type_id' => $menuNormal->id,
             'status_id' => $statusAvailable->id,
-            'name' => 'Certificados',
+            'name' => 'CERTIFICATES',
             'logo' => 'routes/route10.png',
             'order' => 3
         ]);
@@ -838,7 +865,7 @@ class AuthenticationSeeder extends Seeder
             'module_id' => $moduleApp->id,
             'type_id' => $menuNormal->id,
             'status_id' => $statusAvailable->id,
-            'name' => 'Conferencias y Afiliaciones',
+            'name' => 'CONFERENCES AND AFFILIATIONS',
             'logo' => 'routes/route11.png',
             'order' => 4
         ]);
@@ -867,14 +894,14 @@ class AuthenticationSeeder extends Seeder
     {
         $user = User::find(1);
 
-        foreach (Role::all() as $role) {
-            $user->roles()->attach($role->id);
-        }
-        $user = User::where('id', '!=', 1)->get();
+//        foreach (Role::all() as $role) {
+        $user->roles()->attach(1);
+//        }
+//        $user = User::where('id', '!=', 1)->get();
 
-        foreach ($user as $users) {
-            $users->roles()->attach(random_int(1, Role::all()->count()));
-        }
+//        foreach ($user as $users) {
+//            $users->roles()->attach(random_int(1, Role::all()->count()));
+//        }
     }
 
     private function createUsersInstitutions()
@@ -888,16 +915,16 @@ class AuthenticationSeeder extends Seeder
 
     private function createSecurityQuestions()
     {
-        SecurityQuestion::factory()->create(['name' => '¿Cuál es el nombre de su padre?']);
-        SecurityQuestion::factory()->create(['name' => '¿Cuál es el nombre de su madre?']);
-        SecurityQuestion::factory()->create(['name' => '¿Cuál es el nombre de su mascota?']);
-        SecurityQuestion::factory()->create(['name' => '¿Cuál es el nombre de su mejor amigo de la infancia?']);
-        SecurityQuestion::factory()->create(['name' => '¿Cuál es el nombre de su color favorito?']);
-        SecurityQuestion::factory()->create(['name' => '¿Cuál es el nombre de su fruta favorita?']);
-        SecurityQuestion::factory()->create(['name' => '¿Cuál es el nombre de su abuela materna?']);
-        SecurityQuestion::factory()->create(['name' => '¿Cuál es el nombre de su abuela paterna?']);
-        SecurityQuestion::factory()->create(['name' => '¿Cuál es su marca de auto favorito?']);
-        SecurityQuestion::factory()->create(['name' => '¿Cuál es el nombre de su canción favorita?']);
+        SecurityQuestion::factory()->create(['name' => '¿Cual es el nombre de su padre?']);
+        SecurityQuestion::factory()->create(['name' => '¿Cual es el nombre de su madre?']);
+        SecurityQuestion::factory()->create(['name' => '¿Cual es el nombre de su mascota?']);
+        SecurityQuestion::factory()->create(['name' => '¿Cual es el nombre de su mejor amigo de la infancia?']);
+        SecurityQuestion::factory()->create(['name' => '¿Cual es el nombre de su color favorito?']);
+        SecurityQuestion::factory()->create(['name' => '¿Cual es el nombre de su fruta favorita?']);
+        SecurityQuestion::factory()->create(['name' => '¿Cual es el nombre de su abuela materna?']);
+        SecurityQuestion::factory()->create(['name' => '¿Cual es el nombre de su abuela paterna?']);
+        SecurityQuestion::factory()->create(['name' => '¿Cual es su marca de auto favorito?']);
+        SecurityQuestion::factory()->create(['name' => '¿Cual es el nombre de su cancion favorita?']);
     }
 
     private function createSocialmedia()

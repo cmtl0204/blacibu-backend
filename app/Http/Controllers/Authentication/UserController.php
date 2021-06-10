@@ -26,6 +26,7 @@ class  UserController extends Controller
             ->with('identificationType')
             ->with('sex')
             ->with('gender')
+            ->with('lang')
             ->with('bloodType')
             ->with('roles')
             ->where('username', $username)

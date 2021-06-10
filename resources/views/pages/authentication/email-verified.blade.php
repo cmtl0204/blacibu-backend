@@ -2,7 +2,7 @@
 @section('content')
     <div class="row">
         <div class="col-12 text-muted ">
-            <h3 class="text-center text-primary">Correo Electrónico Verificado</h3>
+            <h3 class="text-center text-success">Correo Electrónico Verificado</h3>
             <br>
             <p>Gracias por registrarse en <strong>{{$system->name}}  ({{$system->acronym}})</strong> </p>
             <p>Para empezar a utilizar nuestro sistema, debe hacer click en el siguiente enlace:</p>

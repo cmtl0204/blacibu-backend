@@ -23,7 +23,7 @@ class ProfessionalController extends Controller
 
     public function updateProfessional(Request $request)
     {
-        $language = Catalogue::find($request->input('professional.language.id'));
+        $lang = Catalogue::find($request->input('professional.lang.id'));
         $identificationType = Catalogue::find($request->input('professional.user.identification_type.id'));
         $country = Location::find($request->input('professional.country.id'));
 
@@ -35,7 +35,7 @@ class ProfessionalController extends Controller
         $user->email = $request->input('professional.user.email');
         $user->birthdate = $request->input('professional.user.birthdate');
         $user->phone = $request->input('professional.user.phone');
-        $user->language()->associate($language);
+        $user->lang()->associate($lang);
         $user->identificationType()->associate($identificationType);
 
         if ($request->input('professional.user.address')) {
@@ -90,7 +90,7 @@ class ProfessionalController extends Controller
     public function getProfessional(Request $request)
     {
         $professional = $request->user()->professional()->with(['country', 'status', 'socialmedia'])->with(['user' => function ($user) {
-            $user->with(['identificationType', 'language'])->with(['address' => function ($address) {
+            $user->with(['identificationType', 'lang'])->with(['address' => function ($address) {
                 $address->with('location');
             }]);
         }])->first();

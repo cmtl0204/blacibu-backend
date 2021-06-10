@@ -11,7 +11,7 @@ class LocationController extends Controller
 {
     public function index(Request $request)
     {
-        $locations = Location::with('type')->with('parent')->with(['children' => function ($province) {
+        $locations = Location::subregion($request->input('subregion'))->with('type')->with('parent')->with(['children' => function ($province) {
             $province->with('parent')->with(['children' => function ($canton) {
                 $canton->with('parent')->with(['children' => function ($parish) {
                     $parish->with('parent')->with('children');
@@ -101,7 +101,21 @@ class LocationController extends Controller
     public function getCountries(Request $request)
     {
         $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
-        $locations = Location::whereHas('type', function ($type) use ($catalogues) {
+
+        if($request->input('subregion')==='ALL'){
+            $locations = Location::whereHas('type', function ($type) use ($catalogues) {
+                $type->where('type', $catalogues['catalogue']['location']['type'])
+                    ->where('code', $catalogues['catalogue']['location']['country']);
+            })->get();
+            return response()->json([
+                'data' => $locations,
+                'msg' => [
+                    'summary' => 'success',
+                    'detail' => '',
+                    'code' => '200'
+                ]], 200);
+        }
+        $locations = Location::subregion($request->input('subregion'))->whereHas('type', function ($type) use ($catalogues) {
             $type->where('type', $catalogues['catalogue']['location']['type'])
                 ->where('code', $catalogues['catalogue']['location']['country']);
         })->get();
@@ -112,6 +126,7 @@ class LocationController extends Controller
                 'detail' => '',
                 'code' => '200'
             ]], 200);
+
     }
 
     public function getLocations(Request $request)

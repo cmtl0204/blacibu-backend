@@ -145,7 +145,7 @@ class User extends Authenticatable implements Auditable, MustVerifyEmail
         return $this->morphToMany(Institution::class, 'institutionable', 'app.institutionables');
     }
 
-    function language()
+    function lang()
     {
         return $this->belongsTo(Catalogue::class);
     }

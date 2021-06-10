@@ -48,4 +48,11 @@ class Location extends Model implements Auditable
     {
         return $this->hasMany(Location::class, 'parent_id');
     }
+
+    function scopeSubregion($query, $subregion)
+    {
+        if ($subregion) {
+            return $query->orWhere('subregion', "$subregion");
+        }
+    }
 }

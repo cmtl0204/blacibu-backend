@@ -26,7 +26,7 @@ class Professional extends Model implements Auditable
     protected $connection = 'pgsql-app';
     protected $table = 'app.professionals';
 
-    protected $fillable = ['state'];
+    protected $fillable = ['subregion'];
 
     // Instance
     public static function getInstance($id)
@@ -78,10 +78,11 @@ class Professional extends Model implements Auditable
     {
         return $this->morphMany(Image::class, 'imageable');
     }
+
     public function socialmedia()
     {
         return $this->morphToMany(Socialmedia::class, 'socialmediable', 'app.socialmediables')
-            ->withPivot('user','url')->withTimestamps();
+            ->withPivot('user', 'url')->withTimestamps();
     }
 
     public function status()
