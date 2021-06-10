@@ -25,6 +25,8 @@ use App\Models\App\Professional;
 use App\Models\Authentication\Client;
 use App\Models\Authentication\PasswordReset;
 use App\Models\App\Status;
+use App\Models\Authentication\Permission;
+use App\Models\Authentication\Shortcut;
 use App\Models\Authentication\System;
 use App\Models\Authentication\TransactionalCode;
 use App\Models\Authentication\UserUnlock;
@@ -68,7 +70,7 @@ class  AuthController extends Controller
         $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
 
         $role = Role::where('code', $request->input('register.type'))->first();
-        $language = Catalogue::find($request->input('register.language.id'));
+        $lang = Catalogue::find($request->input('register.lang.id'));
         $identificationType = Catalogue::find($request->input('register.identification_type.id'));
         $country = Location::find($request->input('register.country.id'));
         $status = Status::firstWhere('code', $catalogues['status']['in_revision']);
@@ -80,7 +82,8 @@ class  AuthController extends Controller
         $user->lastname = $request->input('register.lastname');
         $user->email = $request->input('register.email');
         $user->password = $request->input('register.password');
-        $user->language()->associate($language);
+        $user->is_changed_password = true;
+        $user->lang()->associate($lang);
         $user->identificationType()->associate($identificationType);
 
         $professional = new Professional();
@@ -88,10 +91,11 @@ class  AuthController extends Controller
         $professional->status()->associate($status);
 
 //        DB::transaction(function () use ($user, $professional, $role) {
-            $user->save();
-            $user->roles()->attach($role);
-            $professional->user()->associate($user);
-            $professional->save();
+        $user->save();
+        $user->roles()->attach($role);
+        $professional->user()->associate($user);
+        $professional->save();
+        $this->createShortcuts($user, $role);
 //        });
         $this->emailVerifiedDirect($user, $role->system()->first()->id);
         return response()->json([
@@ -713,7 +717,8 @@ class  AuthController extends Controller
 
         $permissions = $role->permissions()
             ->with(['route' => function ($route) {
-                $route->with('module')->with('type')->with('status');
+                $route->whereHas('module')
+                ->with('module')->with('type')->with('status');
             }])
             ->where('system_id', $request->system)
             ->get();
@@ -735,5 +740,38 @@ class  AuthController extends Controller
                 'detail' => '',
                 'code' => '200'
             ]], 200);
+    }
+
+    function createShortcuts($user, $role)
+    {
+        $permissions = $role->permissions()->with(['route' => function ($route) {
+            $route->orderBy('order');
+        }])->get();
+        if ($role->code === 'CERTIFIED') {
+            $j = 5;
+        }
+
+        if ($role->code === 'RECERTIFIED') {
+            $j = 9;
+        }
+
+        $shortcut = new Shortcut();
+        $shortcut->name = $permissions[0]->route['name'];
+        $shortcut->image = "routes/route4.png";
+        $shortcut->user()->associate($user);
+        $shortcut->role()->associate($role);
+        $shortcut->permission()->associate($permissions[0]);
+        $shortcut->save();
+
+        for ($i = 1; $i < $permissions->count(); $i++) {
+            $shortcut = new Shortcut();
+            $shortcut->name = $permissions[$i]->route['name'];
+            $shortcut->image = "routes/route$j.png";
+            $shortcut->user()->associate($user);
+            $shortcut->role()->associate($role);
+            $shortcut->permission()->associate($permissions[$i]);
+            $shortcut->save();
+            $j++;
+        }
     }
 }

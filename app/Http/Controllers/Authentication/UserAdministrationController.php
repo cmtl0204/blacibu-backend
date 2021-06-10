@@ -193,7 +193,7 @@ class  UserAdministrationController extends Controller
         }
 
         $model->status()->associate($status);
-        $model->observation = null;
+        $model->observation = $request->input('observation');
         $model->save();
 
         return response()->json([

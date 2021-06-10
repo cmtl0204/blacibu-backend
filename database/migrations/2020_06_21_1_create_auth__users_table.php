@@ -11,7 +11,7 @@ class CreateAuthUsersTable extends Migration
         Schema::connection('pgsql-authentication')->create('users', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('language_id')
+            $table->foreignId('lang_id')
                 ->nullable()
                 ->constrained('app.catalogues');
 
