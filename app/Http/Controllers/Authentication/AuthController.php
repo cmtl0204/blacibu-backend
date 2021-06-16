@@ -112,18 +112,18 @@ class  AuthController extends Controller
     {
         $userSocialite = Socialite::driver($driver)->stateless()->user();
         $user = User::firstWhere('email', $userSocialite->getEmail());
-
+        $system = System::find($request->system);
         if ($user) {
             if ($userSocialite->user['verified_email']) {
                 $user->markEmailAsVerified();
             }
             $token = $user->createToken($userSocialite->getEmail())->accessToken;
 //            $url = "http://siga.test:4200/#/auth/login?username={$user->username}&token={$token}";
-            $url = "http://localhost:4200/#/auth/login?username={$user->username}&token={$token}";
+            $url =  $system->redirect."auth/login?username={$user->username}&token={$token}";
 
             return redirect()->to($url);
         }
-        $system = System::find($request->system);
+
 //        $url = "http://localhost:4200/#/auth/unregistered-user?email={$userSocialite->getEmail()}"
         $url = $system->redirect."auth/register?email={$userSocialite->getEmail()}"
             . "&given_name={$userSocialite->user['given_name']}" .
