@@ -108,7 +108,7 @@ class  AuthController extends Controller
         ], 201);
     }
 
-    function handleProviderCallback($driver)
+    function handleProviderCallback(Request $request,$driver)
     {
         $userSocialite = Socialite::driver($driver)->stateless()->user();
         $user = User::firstWhere('email', $userSocialite->getEmail());
@@ -123,9 +123,9 @@ class  AuthController extends Controller
 
             return redirect()->to($url);
         }
-
+        $system = System::find($request->system);
 //        $url = "http://localhost:4200/#/auth/unregistered-user?email={$userSocialite->getEmail()}"
-        $url = "http://localhost:4200/#/auth/register?email={$userSocialite->getEmail()}"
+        $url = $system->redirect."auth/register?email={$userSocialite->getEmail()}"
             . "&given_name={$userSocialite->user['given_name']}" .
             "&family_name={$userSocialite->user['family_name']}";
 

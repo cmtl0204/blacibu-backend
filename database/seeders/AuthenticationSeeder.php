@@ -92,7 +92,7 @@ class AuthenticationSeeder extends Seeder
             'name' => 'Sistema de Cirugia y Traumatologia Bucomaxilofacial',
             'acronym' => 'BLACIBU',
             'version' => '1.2.3',
-            'redirect' => 'http://localhost:4200',
+            'redirect' => 'http://pruebas.blacibu.yavirac.edu.ec/',
             'date' => '2021-03-10',
             'status_id' => $statysAvailable->id
         ]);
