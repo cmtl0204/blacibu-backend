@@ -108,11 +108,11 @@ class  AuthController extends Controller
         ], 201);
     }
 
-    function handleProviderCallback(Request $request,$driver)
+    function handleProviderCallback($driver)
     {
         $userSocialite = Socialite::driver($driver)->stateless()->user();
         $user = User::firstWhere('email', $userSocialite->getEmail());
-        $system = System::find($request->system);
+        $system = System::find(1);
         if ($user) {
             if ($userSocialite->user['verified_email']) {
                 $user->markEmailAsVerified();
