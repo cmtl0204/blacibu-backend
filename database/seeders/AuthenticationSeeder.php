@@ -104,23 +104,23 @@ class AuthenticationSeeder extends Seeder
 
         Status::factory()->create([
             'code' => $catalogues['status']['active'],
-            'name' => 'ACTIVE',
+            'name' => 'ACTIVO',
         ]);
         Status::factory()->create([
             'code' => $catalogues['status']['inactive'],
-            'name' => 'INACTIVE',
+            'name' => 'INACTIVO',
         ]);
         Status::factory()->create([
             'code' => $catalogues['status']['locked'],
-            'name' => 'LOCKED',
+            'name' => 'BLOQUEADO',
         ]);
         Status::factory()->create([
             'code' => $catalogues['status']['available'],
-            'name' => 'AVAILABLE',
+            'name' => 'HABILITADO',
         ]);
         Status::factory()->create([
             'code' => $catalogues['status']['maintenance'],
-            'name' => 'MAINTENANCE',
+            'name' => 'EN MANTENIMIENTO',
         ]);
         Status::factory()->create([
             'code' => $catalogues['status']['accepted'],
@@ -132,7 +132,7 @@ class AuthenticationSeeder extends Seeder
         ]);
         Status::factory()->create([
             'code' => $catalogues['status']['in_revision'],
-            'name' => 'EN REVISIoN',
+            'name' => 'EN REVISIÓN',
         ]);
     }
 
@@ -781,15 +781,7 @@ class AuthenticationSeeder extends Seeder
             'logo' => 'routes/route4.png',
             'order' => 1
         ]);
-//        Route::factory()->create([
-//            'uri' => $catalogues['route']['professional']['payment'],
-//            'module_id' => $moduleApp->id,
-//            'type_id' => $menuNormal->id,
-//            'status_id' => $statusAvailable->id,
-//            'name' => 'Constancia de pago',
-//            'logo' => 'routes/route8.png',
-//            'order' => 2
-//        ]);
+
         // Administrator
         Route::factory()->create([
             'uri' => $catalogues['route']['administrator']['administration'],
@@ -932,30 +924,27 @@ class AuthenticationSeeder extends Seeder
         Socialmedia::create([
             'name' => 'FACEBOOK',
             'icon' => 'pi pi-facebook',
+            'logo' => 'socialmedia/facebook.png',
         ]);
         Socialmedia::create([
-            'name' => 'YOUTUBE',
-            'icon' => 'pi pi-youtube',
+            'name' => 'INSTAGRAM',
+            'icon' => 'pi pi-camera',
+            'logo' => 'socialmedia/instagram.png',
+        ]);
+        Socialmedia::create([
+            'name' => 'LINKEDIN',
+            'icon' => 'pi pi-id-card',
+            'logo' => 'socialmedia/linkedin.png',
         ]);
         Socialmedia::create([
             'name' => 'TWITTER',
             'icon' => 'pi pi-twitter',
+            'logo' => 'socialmedia/twitter.png',
         ]);
         Socialmedia::create([
-            'name' => 'SLACK',
-            'icon' => 'pi pi-slack',
-        ]);
-        Socialmedia::create([
-            'name' => 'GOOGLE',
-            'icon' => 'pi pi-google',
-        ]);
-        Socialmedia::create([
-            'name' => 'GITHUB',
-            'icon' => 'pi pi-github',
-        ]);
-        Socialmedia::create([
-            'name' => 'DISCORD',
-            'icon' => 'pi pi-discord',
+            'name' => 'YOUTUBE',
+            'icon' => 'pi pi-youtube',
+            'logo' => 'socialmedia/youtube.png',
         ]);
     }
 }

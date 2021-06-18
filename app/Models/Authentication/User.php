@@ -2,6 +2,7 @@
 
 namespace App\Models\Authentication;
 
+use Dyrynda\Database\Support\CascadeSoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Passport\HasApiTokens;
@@ -10,7 +11,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 use OwenIt\Auditing\Auditable as Auditing;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\SoftDeletes;
+//use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\App\Address;
 use App\Models\App\Catalogue;
 use App\Models\App\Image;
@@ -39,11 +40,12 @@ class User extends Authenticatable implements Auditable, MustVerifyEmail
 {
     use HasApiTokens, Notifiable, HasFactory;
     use Auditing;
-    use SoftDeletes;
+//    use SoftDeletes;
+//    use CascadeSoftDeletes;
 
     protected $connection = 'pgsql-authentication';
     protected $table = 'authentication.users';
-
+//    protected $cascadeDeletes = ['professional'];
     protected static $instance;
 
     const ATTEMPTS = 3;
@@ -132,7 +134,7 @@ class User extends Authenticatable implements Auditable, MustVerifyEmail
 
     function identificationType()
     {
-        return $this->belongsTo(Catalogue::class,'identification_type_id');
+        return $this->belongsTo(Catalogue::class, 'identification_type_id');
     }
 
     function images()
