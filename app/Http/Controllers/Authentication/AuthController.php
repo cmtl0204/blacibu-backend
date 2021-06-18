@@ -22,10 +22,8 @@ use App\Mail\Authentication\UserUnlockMailable;
 use App\Models\App\Catalogue;
 use App\Models\App\Location;
 use App\Models\App\Professional;
-use App\Models\Authentication\Client;
 use App\Models\Authentication\PasswordReset;
 use App\Models\App\Status;
-use App\Models\Authentication\Permission;
 use App\Models\Authentication\Shortcut;
 use App\Models\Authentication\System;
 use App\Models\Authentication\TransactionalCode;
@@ -33,7 +31,6 @@ use App\Models\Authentication\UserUnlock;
 use App\Models\Authentication\User;
 use App\Models\Authentication\Role;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -68,12 +65,12 @@ class  AuthController extends Controller
         }
 
         $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
-
+        $statusUser = Status::firstWhere('code', $catalogues['status']['active']);
         $role = Role::where('code', $request->input('register.type'))->first();
         $lang = Catalogue::find($request->input('register.lang.id'));
         $identificationType = Catalogue::find($request->input('register.identification_type.id'));
         $country = Location::find($request->input('register.country.id'));
-        $status = Status::firstWhere('code', $catalogues['status']['in_revision']);
+        $statusProfessional = Status::firstWhere('code', $catalogues['status']['in_revision']);
 
         $user = new User();
         $user->username = $request->input('register.username');
@@ -85,10 +82,11 @@ class  AuthController extends Controller
         $user->is_changed_password = true;
         $user->lang()->associate($lang);
         $user->identificationType()->associate($identificationType);
+        $user->status()->associate($statusUser);
 
         $professional = new Professional();
         $professional->country()->associate($country);
-        $professional->status()->associate($status);
+        $professional->status()->associate($statusProfessional);
 
 //        DB::transaction(function () use ($user, $professional, $role) {
         $user->save();
@@ -447,7 +445,7 @@ class  AuthController extends Controller
     function unlockUser(AuthUnlockRequest $request)
     {
         $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
-        $userUnlock = UserUnlock::where('token', $request->token)->first();
+        $userUnlock = UserUnlock::where('username', $request->username)->where('token', $request->token)->first();
         if (!$userUnlock) {
             return response()->json([
                 'data' => null,
@@ -667,7 +665,7 @@ class  AuthController extends Controller
             ]], 201);
     }
 
-    private function hiddenStringEmail($email, $start = 3)
+    private function hiddenStringEmail($email, $start = 2)
     {
         $end = strlen($email) - strpos($email, "@");
         $len = strlen($email);

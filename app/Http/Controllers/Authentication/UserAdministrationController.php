@@ -4,24 +4,33 @@ namespace App\Http\Controllers\Authentication;
 
 use App\Exports\UsersExport;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Authentication\Auth\AuthResetPasswordRequest;
 use App\Http\Requests\Authentication\User\UserCreateRequest;
 use App\Http\Requests\Authentication\UserAdministration\UserAdminIndexRequest;
 use App\Http\Requests\Authentication\UserRequest;
+use App\Mail\Authentication\EmailVerifiedMailable;
+use App\Mail\Authentication\UserCreationMailable;
 use App\Models\App\Certificate;
 use App\Models\App\Conference;
 use App\Models\App\Document;
 use App\Models\App\Location;
 use App\Models\App\Payment;
 use App\Models\App\Professional;
+use App\Models\Authentication\PasswordReset;
 use App\Models\Authentication\PassworReset;
 use App\Models\Authentication\Role;
 use App\Models\App\Catalogue;
 use App\Models\App\Status;
+use App\Models\Authentication\Shortcut;
 use App\Models\Authentication\User;
+use Carbon\Carbon;
+use Carbon\Traits\Creator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 
 class  UserAdministrationController extends Controller
@@ -41,33 +50,15 @@ class  UserAdministrationController extends Controller
                     $query->identification($search);
                     $query->name($search);
                 })
-                ->with(['institutions' => function ($institutions) {
-                    $institutions->orderBy('name');
-                }])
-                ->with(['roles' => function ($roles) use ($request) {
-                    $roles
-                        ->with(['permissions' => function ($permissions) {
-                            $permissions->with(['route' => function ($route) {
-                                $route->with('module')->with('type')->with('status');
-                            }])->with('institution');
-                        }]);
-                }])
+                ->with(['roles', 'status'])
+                ->orderBy('lastname')
                 ->paginate($request->input('per_page'));
         } else {
             $users = User::whereHas('roles', function ($role) use ($system) {
                 $role->where('system_id', '=', $system);
             })
-                ->with(['institutions' => function ($institutions) {
-                    $institutions->orderBy('name');
-                }])
-                ->with(['roles' => function ($roles) use ($request) {
-                    $roles
-                        ->with(['permissions' => function ($permissions) {
-                            $permissions->with(['route' => function ($route) {
-                                $route->with('module')->with('type')->with('status');
-                            }])->with('institution');
-                        }]);
-                }])
+                ->with(['roles', 'status'])
+                ->orderBy('lastname')
                 ->paginate($request->input('per_page'));
         }
 
@@ -373,23 +364,59 @@ class  UserAdministrationController extends Controller
 
     public function store(Request $request)
     {
+        if (User::where('username', $request->input('user.username'))->first()) {
+            return response()->json([
+                'data' => null,
+                'msg' => [
+                    'summary' => 'Número de documento ya existe: ' . $request->input('user.username'),
+                    'detail' => 'Por favor inicie sesión o ingrese otro número de documento',
+                    'code' => '400'
+                ]
+            ], 400);
+        }
+
+        if (User::where('email', $request->input('user.email'))->first()) {
+            return response()->json([
+                'data' => null,
+                'msg' => [
+                    'summary' => 'Correo electrónico ya existe: ' . $request->input('user.email'),
+                    'detail' => 'Por favor inicie sesión o ingrese otro correo electrónico',
+                    'code' => '400'
+                ]
+            ], 400);
+        }
+
+        $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
+        $role = Role::where('code', 'ADMIN')->first();
+        $status = Status::firstWhere('code', $catalogues['status']['active']);
+        $passwordGenerated = Str::random(8);
+
         $user = new User();
-        $user->identification = $request->input('user.identification');
         $user->username = $request->input('user.username');
+        $user->identification = $request->input('user.username');
         $user->name = $request->input('user.name');
         $user->lastname = $request->input('user.lastname');
-        $user->birthdate = $request->input('user.birthdate');
         $user->email = $request->input('user.email');
-        $user->password = Hash::make($request->input('user.password'));
+        $user->password = $passwordGenerated;
+        $user->status()->associate($status);
 
-        $user->status()->associate(Status::getInstance($request->input('user.status')));
+        $professional = new Professional();
+
+//        DB::transaction(function () use ($user, $professional, $role) {
         $user->save();
-
+        $user->markEmailAsVerified();
+        $user->roles()->attach($role);
+        $professional->user()->associate($user);
+        $professional->save();
+        $this->createShortcuts($user, $role);
+//        });
+        $this->emailUserCreation($user, $passwordGenerated, $role->system()->first()->id);
+        $user = User::where('id', $user->id)->with(['status', 'roles'])->first();
         return response()->json([
             'data' => $user,
             'msg' => [
-                'summary' => 'success',
-                'detail' => '',
+                'summary' => 'La cuenta ha sido creada',
+                'detail' => 'Se envió un email la cuenta de correo electrónico del usuario',
                 'code' => '201'
             ]
         ], 201);
@@ -397,41 +424,61 @@ class  UserAdministrationController extends Controller
 
     public function update(Request $request, $userId)
     {
-        $system = $request->input('system');
-        $user = User::whereHas('roles', function ($role) use ($system) {
-            $role->where('system_id', '=', $system);
-        })->where('id', $userId)
-            ->get();
-
-        if ($user->count() == 0) {
+        $user = User::with(['roles', 'status'])->find($userId);
+        if (User::where('id', '<>', $user->id)->where('username', $request->input('user.username'))->first()) {
             return response()->json([
                 'data' => null,
                 'msg' => [
-                    'summary' => 'Usuario no encontrado',
-                    'detail' => 'Intente de nuevo',
-                    'code' => '404'
+                    'summary' => 'Número de documento ya existe: ' . $request->input('user.username'),
+                    'detail' => 'Por favor inicie sesión o ingrese otro número de documento',
+                    'code' => '400'
                 ]
-            ], 404);
-        } else {
-            $user = User::find($userId);
-            $user->identification = $request->input('user.identification');
-            $user->username = $request->input('user.username');
-            $user->name = $request->input('user.name');
-            $user->lastname = $request->input('user.lastname');
-            $user->birthdate = $request->input('user.birthdate');
-            $user->email = $request->input('user.email');
-            $user->phone = $request->input('user.phone');
-
-            $user->save();
-            return response()->json([
-                'data' => $user,
-                'msg' => [
-                    'summary' => 'update',
-                    'detail' => '',
-                    'code' => '201'
-                ]
-            ], 201);
+            ], 400);
         }
+
+        if (User::where('id', '<>', $user->id)->where('email', $request->input('user.email'))->first()) {
+            return response()->json([
+                'data' => null,
+                'msg' => [
+                    'summary' => 'Correo electrónico ya existe: ' . $request->input('user.email'),
+                    'detail' => 'Por favor inicie sesión o ingrese otro correo electrónico',
+                    'code' => '400'
+                ]
+            ], 400);
+        }
+
+
+        $user->username = $request->input('user.username');
+        $user->identification = $request->input('user.username');
+        $user->name = $request->input('user.name');
+        $user->lastname = $request->input('user.lastname');
+        $user->email = $request->input('user.email');
+        $user->save();
+
+
+        return response()->json([
+            'data' => $user,
+            'msg' => [
+                'summary' => 'Se actulizó la información',
+                'detail' => '',
+                'code' => '201'
+            ]
+        ], 201);
+    }
+
+    public function inactive(User $user)
+    {
+        $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
+        $status = Status::firstWhere('code', $catalogues['status']['inactive']);
+        $user->status()->associate($status);
+        $user->save();
+        return response()->json([
+            'data' => $user,
+            'msg' => [
+                'summary' => 'Usuario inactivado',
+                'detail' => 'Se inactivó el usuario correctamente',
+                'code' => '201'
+            ]], 201);
     }
 
     public function delete(Request $request)
@@ -467,5 +514,62 @@ class  UserAdministrationController extends Controller
             }
         }
         return $filters;
+    }
+
+    private function createShortcuts($user, $role)
+    {
+        $permissions = $role->permissions()->with(['route' => function ($route) {
+            $route->orderBy('order');
+        }])->get();
+
+        if ($role->code === 'ADMIN') {
+            $j = 1;
+        }
+
+        if ($role->code === 'CERTIFIED') {
+            $j = 5;
+        }
+
+        if ($role->code === 'RECERTIFIED') {
+            $j = 9;
+        }
+
+        $shortcut = new Shortcut();
+        $shortcut->name = $permissions[0]->route['name'];
+        $shortcut->image = "routes/route4.png";
+        $shortcut->user()->associate($user);
+        $shortcut->role()->associate($role);
+        $shortcut->permission()->associate($permissions[0]);
+        $shortcut->save();
+
+        for ($i = 1; $i < $permissions->count(); $i++) {
+            $shortcut = new Shortcut();
+            $shortcut->name = $permissions[$i]->route['name'];
+            $shortcut->image = "routes/route$j.png";
+            $shortcut->user()->associate($user);
+            $shortcut->role()->associate($role);
+            $shortcut->permission()->associate($permissions[$i]);
+            $shortcut->save();
+            $j++;
+        }
+    }
+
+    private function emailUserCreation($user, $password, $systemId)
+    {
+        if (!$user) {
+            return response()->json([
+                'data' => null,
+                'msg' => [
+                    'summary' => 'Usuario no encontrando',
+                    'detail' => 'Intente de nuevo',
+                    'code' => '404'
+                ]], 404);
+        }
+
+        Mail::to($user->email)
+            ->send(new UserCreationMailable(
+                json_encode(['user' => $user, 'password' => $password]),
+                $systemId
+            ));
     }
 }

@@ -1,10 +1,10 @@
 {
     "status": {
         "type": "STATUS_TYPE",
-        "active": "1",
-        "inactive": "2",
-        "locked": "3",
-        "available": "4",
+        "active": "ACTIVE",
+        "inactive": "INACTIVE",
+        "locked": "LOCKED",
+        "available": "AVAILABLE",
         "maintenance": "503",
         "accepted": "ACCEPTED",
         "rejected": "REJECTED",

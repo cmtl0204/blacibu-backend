@@ -67,6 +67,7 @@ Route::prefix('user-admin')->group(function () {
     Route::put('professionals/documents/reject', [UserAdministrationController::class, 'rejectDocumentProfessional']);
     Route::put('professionals/revise', [UserAdministrationController::class, 'reviseProfessional']);
     Route::put('delete', [UserAdministrationController::class, 'delete']);
+    Route::put('inactive/{user}', [UserAdministrationController::class, 'inactive']);
 });
 
 // Role
