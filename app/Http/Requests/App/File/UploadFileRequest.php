@@ -19,7 +19,7 @@ class UploadFileRequest extends FormRequest
                 'required',
                 'mimes:pdf,txt,doc,docx,xls,xlsx,csv,ppt,pptx,zip,rar,7z,tar,jpg,jpeg,png,bmp,tiff,tif,svg',
                 'file',
-                'max:1024000',
+                'max:2048',
             ],
         ];
         return AppFormRequest::rules($rules);
