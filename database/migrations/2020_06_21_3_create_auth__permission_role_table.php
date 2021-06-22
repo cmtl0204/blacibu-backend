@@ -11,11 +11,9 @@ class CreateAuthPermissionRoleTable extends Migration
         Schema::connection(env('DB_CONNECTION'))->create('permission_role', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('role_id')
-                ->constrained('authentication.roles');
+            $table->integer('role_id');
 
-            $table->foreignId('permission_id')
-                ->constrained('authentication.permissions');
+            $table->integer('permission_id');
 
             $table->timestamps();
         });

@@ -19,8 +19,8 @@ class SecurityQuestion extends Model implements Auditable
     use Auditing;
     use SoftDeletes;
 
-    protected $connection = 'pgsql-authentication';
-    protected $table = 'authentication.security_questions';
+    // protected $connection = 'pgsql-authentication';
+    protected $table = 'security_questions';
 
     protected static $instance;
 

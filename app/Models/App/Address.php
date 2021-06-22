@@ -16,8 +16,8 @@ class Address extends Model implements Auditable
 
     protected static $instance;
 
-    protected $connection = 'pgsql-app';
-    protected $table = 'app.address';
+    // protected $connection = 'pgsql-app';
+    protected $table = 'address';
 
     protected $fillable = [
         'latitud',

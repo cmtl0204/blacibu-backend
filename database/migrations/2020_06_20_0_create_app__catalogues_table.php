@@ -8,13 +8,12 @@ class CreateAppCataloguesTable extends Migration
 {
     public function up()
     {
-        Schema::connection(env('DB_CONNECTION_APP'))->create('catalogues', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION'))->create('catalogues', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('parent_id')
+            $table->integer('parent_id')
                 ->nullable()
-                ->comment('Un catalogo puede tener catalogos hijos')
-                ->constrained('app.catalogues');
+                ->comment('Un catalogo puede tener catalogos hijos');
 
             $table->string('code')
                 ->comment('No debe ser modificado una vez que se lo crea');
@@ -25,7 +24,7 @@ class CreateAppCataloguesTable extends Migration
                 ->nullable();
 
             $table->text('color')
-                ->comment('color en hexadecimal')->default('#9c9c9c');
+                ->comment('color en hexadecimal');
 
             $table->string('type')
                 ->comment('Para categorizar los catalogos');
@@ -42,6 +41,6 @@ class CreateAppCataloguesTable extends Migration
 
     public function down()
     {
-        Schema::connection(env('DB_CONNECTION_APP'))->dropIfExists('catalogues');
+        Schema::connection(env('DB_CONNECTION'))->dropIfExists('catalogues');
     }
 }

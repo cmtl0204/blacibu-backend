@@ -8,9 +8,9 @@ class CreateAppSocialmediablesTable extends Migration
 {
     public function up()
     {
-        Schema::connection(env('DB_CONNECTION_APP'))->create('socialmediables', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION'))->create('socialmediables', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('socialmedia_id')->constrained('app.socialmedia');
+            $table->integer('socialmedia_id')->constrained('app.socialmedia');
             $table->morphs('socialmediable');
             $table->string('user')->nullable();
             $table->string('url')->nullable();
@@ -20,6 +20,6 @@ class CreateAppSocialmediablesTable extends Migration
 
     public function down()
     {
-        Schema::connection(env('DB_CONNECTION_APP'))->dropIfExists('socialmediables');
+        Schema::connection(env('DB_CONNECTION'))->dropIfExists('socialmediables');
     }
 }

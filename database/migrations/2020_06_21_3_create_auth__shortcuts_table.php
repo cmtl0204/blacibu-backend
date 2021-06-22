@@ -11,15 +11,12 @@ class CreateAuthShortcutsTable extends Migration
         Schema::connection(env('DB_CONNECTION'))->create('shortcuts', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('user_id')
-                ->constrained('authentication.users');
+            $table->integer('user_id');
 
-            $table->foreignId('role_id')
-                ->constrained('authentication.roles')
+            $table->integer('role_id')
                 ->comment('Solo aparecen en el rol correspondiente');
 
-            $table->foreignId('permission_id')
-                ->constrained('authentication.permissions')
+            $table->integer('permission_id')
                 ->comment('Para poder dar integridad y acceder a la ruta');
 
             $table->string('name');

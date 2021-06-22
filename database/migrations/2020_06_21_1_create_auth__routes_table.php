@@ -11,20 +11,16 @@ class CreateAuthRoutesTable extends Migration
         Schema::connection(env('DB_CONNECTION'))->create('routes', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('parent_id')->nullable()
-                ->constrained('authentication.routes')
+            $table->integer('parent_id')->nullable()
                 ->comment('Una ruta puede tener rutas hijas');
 
-            $table->foreignId('module_id')
-                ->constrained('authentication.modules')
+            $table->integer('module_id')
                 ->comment('Cada ruta debe pertenecer a un modulo del sistema');
 
-            $table->foreignId('type_id')
-                ->constrained('app.catalogues')
+            $table->integer('type_id')
                 ->comment('Tipo de ruta: megamenu, menu normal');
 
-            $table->foreignId('status_id')
-                ->constrained('app.status')
+            $table->integer('status_id')
                 ->comment('Para saber si la ruta esta disponible o en mantenimiento');
 
             $table->string('uri')

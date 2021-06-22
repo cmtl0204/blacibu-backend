@@ -20,8 +20,8 @@ class Conference extends Model implements Auditable
 
     protected static $instance;
 
-    protected $connection = 'pgsql-app';
-    protected $table = 'app.conferences';
+    // protected $connection = 'pgsql-app';
+    protected $table = 'conferences';
 
     protected $fillable = [
         'modality',

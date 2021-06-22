@@ -20,8 +20,8 @@ class Payment extends Model implements Auditable
 
     protected static $instance;
 
-    protected $connection = 'pgsql-app';
-    protected $table = 'app.payments';
+    // protected $connection = 'pgsql-app';
+    protected $table = 'payments';
 
     protected $fillable = [
         'bank',

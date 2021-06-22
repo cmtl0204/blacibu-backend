@@ -48,7 +48,7 @@ class AuthenticationSeeder extends Seeder
         $this->createSystem();
 
         // Institutos
-        $this->createInstitutions();
+//        $this->createInstitutions();
 
         // Roles para el sistema IGNUG
         $this->createRoles();
@@ -77,7 +77,7 @@ class AuthenticationSeeder extends Seeder
         $this->createUsersRoles();
 
         // Users con instituciones
-        $this->createUsersInstitutions();
+//        $this->createUsersInstitutions();
 
         // Security Questions
         $this->createSecurityQuestions();
@@ -241,41 +241,41 @@ class AuthenticationSeeder extends Seeder
         ]);
     }
 
-    private function createInstitutions()
-    {
-        Institution::factory()->create(
-            [
-                'code' => 'bj_1',
-                'name' => 'BENITO JUAREZ',
-                'logo' => 'institutions/1.png',
-                'acronym' => 'BJ',
-                'short_name' => 'BENITO JUAREZ'
-            ]);
-        Institution::factory()->create(
-            [
-                'code' => 'y_2',
-                'name' => 'DE TURISMO Y PATRIMONIO YAVIRAC',
-                'logo' => 'institutions/2.png',
-                'acronym' => 'Y',
-                'short_name' => 'YAVIRAC'
-            ]);
-        Institution::factory()->create(
-            [
-                'code' => '24mayo_3',
-                'name' => '24 DE MAYO',
-                'logo' => 'institutions/3.png',
-                'acronym' => '24MAYO',
-                'short_name' => '24 DE MAYO'
-            ]);
-        Institution::factory()->create(
-            [
-                'code' => 'gc_4',
-                'name' => 'GRAN COLOMBIA',
-                'logo' => 'institutions/4.png',
-                'acronym' => 'GC',
-                'short_name' => 'GRAN COLOMBIA'
-            ]);
-    }
+//    private function createInstitutions()
+//    {
+//        Institution::factory()->create(
+//            [
+//                'code' => 'bj_1',
+//                'name' => 'BENITO JUAREZ',
+//                'logo' => 'institutions/1.png',
+//                'acronym' => 'BJ',
+//                'short_name' => 'BENITO JUAREZ'
+//            ]);
+//        Institution::factory()->create(
+//            [
+//                'code' => 'y_2',
+//                'name' => 'DE TURISMO Y PATRIMONIO YAVIRAC',
+//                'logo' => 'institutions/2.png',
+//                'acronym' => 'Y',
+//                'short_name' => 'YAVIRAC'
+//            ]);
+//        Institution::factory()->create(
+//            [
+//                'code' => '24mayo_3',
+//                'name' => '24 DE MAYO',
+//                'logo' => 'institutions/3.png',
+//                'acronym' => '24MAYO',
+//                'short_name' => '24 DE MAYO'
+//            ]);
+//        Institution::factory()->create(
+//            [
+//                'code' => 'gc_4',
+//                'name' => 'GRAN COLOMBIA',
+//                'logo' => 'institutions/4.png',
+//                'acronym' => 'GC',
+//                'short_name' => 'GRAN COLOMBIA'
+//            ]);
+//    }
 
     private function createEthnicOriginCatalogues()
     {

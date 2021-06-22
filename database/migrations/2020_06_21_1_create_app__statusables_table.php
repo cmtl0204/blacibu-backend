@@ -9,11 +9,10 @@ class CreateAppStatusablesTable extends Migration
 
     public function up()
     {
-        Schema::connection(env('DB_CONNECTION_APP'))->create('statusables', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION'))->create('statusables', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('status_id')
-                ->constrained('app.status');
+            $table->integer('status_id');
 
             $table->morphs('statusable');
 
@@ -23,6 +22,6 @@ class CreateAppStatusablesTable extends Migration
 
     public function down()
     {
-        Schema::connection(env('DB_CONNECTION_APP'))->dropIfExists('statusables');
+        Schema::connection(env('DB_CONNECTION'))->dropIfExists('statusables');
     }
 }

@@ -19,8 +19,8 @@ class UserUnlock extends Model implements Auditable
     use HasFactory;
     use Auditing;
 
-    protected $connection = 'pgsql-authentication';
-    protected $table = 'authentication.user_unlocks';
+    // protected $connection = 'pgsql-authentication';
+    protected $table = 'user_unlocks';
 
     protected static $instance;
 

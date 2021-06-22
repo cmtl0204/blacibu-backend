@@ -18,8 +18,8 @@ class Shortcut extends Model implements Auditable
     use HasFactory;
     use Auditing;
 
-    protected $connection = 'pgsql-authentication';
-    protected $table = 'authentication.shortcuts';
+    // protected $connection = 'pgsql-authentication';
+    protected $table = 'shortcuts';
 
     protected static $instance;
 

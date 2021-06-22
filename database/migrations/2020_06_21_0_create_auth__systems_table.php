@@ -34,8 +34,8 @@ class CreateAuthSystemsTable extends Migration
             $table->date('date')
                 ->comment('Fecha del sistema');
 
-            $table->foreignId('status_id')
-                ->constrained('app.catalogues');
+            $table->integer('status_id')
+                ;
 
             $table->softDeletes();
             $table->timestamps();

@@ -24,8 +24,8 @@ class Image extends Model implements Auditable
 
     protected static $instance;
 
-    protected $connection = 'pgsql-app';
-    protected $table = 'app.images';
+    // protected $connection = 'pgsql-app';
+    protected $table = 'images';
 
     protected $fillable = [
         'name',

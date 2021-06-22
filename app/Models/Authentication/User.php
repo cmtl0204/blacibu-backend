@@ -43,8 +43,8 @@ class User extends Authenticatable implements Auditable, MustVerifyEmail
 //    use SoftDeletes;
 //    use CascadeSoftDeletes;
 
-    protected $connection = 'pgsql-authentication';
-    protected $table = 'authentication.users';
+    // protected $connection = 'pgsql-authentication';
+    protected $table = 'users';
 //    protected $cascadeDeletes = ['professional'];
     protected static $instance;
 

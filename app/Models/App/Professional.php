@@ -23,8 +23,8 @@ class Professional extends Model implements Auditable
 
     protected static $instance;
 
-    protected $connection = 'pgsql-app';
-    protected $table = 'app.professionals';
+    // protected $connection = 'pgsql-app';
+    protected $table = 'professionals';
 
     protected $fillable = ['subregion'];
 

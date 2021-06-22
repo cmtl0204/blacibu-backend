@@ -8,16 +8,16 @@ class CreateAppPaymentsTable extends Migration
 {
     public function up()
     {
-        Schema::connection(env('DB_CONNECTION_APP'))->create('payments', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION'))->create('payments', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('professional_id')
+            $table->integer('professional_id')
                 ->nullable()
                 ->constrained('app.professionals');
 
-            $table->foreignId('status_id')
+            $table->integer('status_id')
                 ->nullable()
-                ->constrained('app.status');
+                ;
 
             $table->string('bank')
                 ->nullable();
@@ -38,6 +38,6 @@ class CreateAppPaymentsTable extends Migration
 
     public function down()
     {
-        Schema::connection(env('DB_CONNECTION_APP'))->dropIfExists('payments');
+        Schema::connection(env('DB_CONNECTION'))->dropIfExists('payments');
     }
 }

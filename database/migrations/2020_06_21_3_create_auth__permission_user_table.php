@@ -11,11 +11,11 @@ class CreateAuthPermissionUserTable extends Migration
         Schema::connection(env('DB_CONNECTION'))->create('permission_user', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('user_id')
-                ->constrained('authentication.users');
+            $table->integer('user_id')
+                ;
 
-            $table->foreignId('permission_id')
-                ->constrained('authentication.users');
+            $table->integer('permission_id')
+                ;
 
             $table->timestamps();
         });

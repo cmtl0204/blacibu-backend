@@ -19,8 +19,8 @@ class PasswordReset extends Model implements Auditable
     use HasFactory;
     use Auditing;
 
-    protected $connection = 'pgsql-authentication';
-    protected $table = 'authentication.password_resets';
+    // protected $connection = 'pgsql-authentication';
+    protected $table = 'password_resets';
 
     protected static $instance;
 

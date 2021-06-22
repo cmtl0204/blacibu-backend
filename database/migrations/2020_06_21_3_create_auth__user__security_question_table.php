@@ -10,8 +10,8 @@ class CreateAuthUserSecurityQuestionTable extends Migration
     {
         Schema::connection(env('DB_CONNECTION'))->create('user_security_questions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('authentication.users');
-            $table->foreignId('security_question_id')->constrained('authentication.security_questions');
+            $table->integer('user_id');
+            $table->integer('security_question_id')->constrained('authentication.security_questions');
             $table->string('answer');
             $table->timestamps();
         });

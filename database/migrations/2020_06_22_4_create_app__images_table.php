@@ -8,7 +8,7 @@ class CreateAppImagesTable extends Migration
 {
     public function up()
     {
-        Schema::connection(env('DB_CONNECTION_APP'))->create('images', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION'))->create('images', function (Blueprint $table) {
             $table->id();
             $table->morphs('imageable');
             $table->string('name');
@@ -22,6 +22,6 @@ class CreateAppImagesTable extends Migration
 
     public function down()
     {
-        Schema::connection(env('DB_CONNECTION_APP'))->dropIfExists('images');
+        Schema::connection(env('DB_CONNECTION'))->dropIfExists('images');
     }
 }

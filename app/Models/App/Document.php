@@ -20,8 +20,8 @@ class Document extends Model implements Auditable
 
     protected static $instance;
 
-    protected $connection = 'pgsql-app';
-    protected $table = 'app.documents';
+    // protected $connection = 'pgsql-app';
+    protected $table = 'documents';
 
     protected $fillable = ['aditional_information'];
     protected $cascadeDeletes = ['file'];

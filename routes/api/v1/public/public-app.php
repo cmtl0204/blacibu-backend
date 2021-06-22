@@ -23,12 +23,10 @@ Route::get('init', function (CreateClientRequest $request) {
         return 'El sistema se encuentra en producción.';
     }
 
-    DB::select('drop schema if exists public cascade;');
-    DB::select('drop schema if exists authentication cascade;');
-    DB::select('drop schema if exists app cascade;');
+    DB::select('drop database if exists blacibu;');
 
-    DB::select('create schema authentication;');
-    DB::select('create schema app;');
+    DB::select('create database blacibu;');
+    DB::select('use blacibu;');
 
     Artisan::call('migrate', ['--seed' => true]);
 

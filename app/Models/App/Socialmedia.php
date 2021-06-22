@@ -16,8 +16,8 @@ class Socialmedia extends Model implements Auditable
 
     private static $instance;
 
-    protected $connection = 'pgsql-app';
-    protected $table = 'app.socialmedia';
+    // protected $connection = 'pgsql-app';
+    protected $table = 'socialmedia';
 
     protected $fillable = [
         'name',

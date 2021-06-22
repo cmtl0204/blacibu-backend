@@ -8,20 +8,20 @@ class CreateAppDocumentsTable extends Migration
 {
     public function up()
     {
-        Schema::connection(env('DB_CONNECTION_APP'))->create('documents', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION'))->create('documents', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('professional_id')
+            $table->integer('professional_id')
                 ->nullable()
                 ->constrained('app.professionals');
 
-            $table->foreignId('status_id')
+            $table->integer('status_id')
                 ->nullable()
-                ->constrained('app.status');
+                ;
 
-            $table->foreignId('type_id')
+            $table->integer('type_id')
                 ->nullable()
-                ->constrained('app.catalogues');
+                ;
 
             $table->text('aditional_information')
                 ->nullable();
@@ -35,6 +35,6 @@ class CreateAppDocumentsTable extends Migration
 
     public function down()
     {
-        Schema::connection(env('DB_CONNECTION_APP'))->dropIfExists('documents');
+        Schema::connection(env('DB_CONNECTION'))->dropIfExists('documents');
     }
 }

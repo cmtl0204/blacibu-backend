@@ -9,17 +9,16 @@ class CreateAppInstitutionablesTable extends Migration
 
     public function up()
     {
-        Schema::connection(env('DB_CONNECTION_APP'))->create('institutionables', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION'))->create('institutionables', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('institution_id')->constrained('app.institutions');
+            $table->integer('institution_id');
             $table->morphs('institutionable');
             $table->timestamps();
-            $table->unique(['institution_id','institutionable_id','institutionable_type']);
         });
     }
 
     public function down()
     {
-        Schema::connection(env('DB_CONNECTION_APP'))->dropIfExists('institutionables');
+        Schema::connection(env('DB_CONNECTION'))->dropIfExists('institutionables');
     }
 }

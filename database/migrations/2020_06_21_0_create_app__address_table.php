@@ -8,12 +8,11 @@ class CreateAppAddressTable extends Migration
 {
     public function up()
     {
-        Schema::connection(env('DB_CONNECTION_APP'))->create('address', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION'))->create('address', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('location_id')
-                ->nullable()
-                ->constrained('app.locations');
+            $table->integer('location_id')
+                ->nullable();
 
             $table->string('main_street')->nullable();
 
@@ -43,7 +42,7 @@ class CreateAppAddressTable extends Migration
 
     public function down()
     {
-        Schema::connection(env('DB_CONNECTION_APP'))->dropIfExists('address');
+        Schema::connection(env('DB_CONNECTION'))->dropIfExists('address');
     }
 
 }

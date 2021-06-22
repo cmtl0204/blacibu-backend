@@ -11,13 +11,11 @@ class CreateAuthRolesTable extends Migration
         Schema::connection(env('DB_CONNECTION'))->create('roles', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('system_id')
-                ->constrained('authentication.systems')
+            $table->integer('system_id')
                 ->comment('Para que el rol pertenezca a un sistema');
 
-            $table->foreignId('institution_id')
-                ->nullable()
-                ->constrained('app.institutions');
+            $table->integer('institution_id')
+                ->nullable();
 
             $table->string('code')
                 ->comment('No debe ser modificado una vez que se lo crea');

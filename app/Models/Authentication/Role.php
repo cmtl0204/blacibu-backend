@@ -24,8 +24,8 @@ class Role extends Model implements Auditable
 
     private static $instance;
 
-    protected $connection = 'pgsql-authentication';
-    protected $table = 'authentication.roles';
+    // protected $connection = 'pgsql-authentication';
+    protected $table = 'roles';
 
     protected $fillable = [
         'code',

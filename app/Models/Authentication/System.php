@@ -26,8 +26,8 @@ class System extends Model implements Auditable
     use Auditing;
     use SoftDeletes;
 
-    protected $connection = 'pgsql-authentication';
-    protected $table = 'authentication.systems';
+    // protected $connection = 'pgsql-authentication';
+    protected $table = 'systems';
 
     protected static $instance;
 

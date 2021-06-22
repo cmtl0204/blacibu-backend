@@ -16,8 +16,8 @@ class Location extends Model implements Auditable
 
     private static $instance;
 
-    protected $connection = 'pgsql-app';
-    protected $table = 'app.locations';
+    // protected $connection = 'pgsql-app';
+    protected $table = 'locations';
 
     protected $fillable = [
         'code',

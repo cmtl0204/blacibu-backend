@@ -17,8 +17,8 @@ class Catalogue extends Model implements Auditable
 
     protected static $instance;
 
-    protected $connection = 'pgsql-app';
-    protected $table = 'app.catalogues';
+    // protected $connection = 'pgsql-app';
+    protected $table = 'catalogues';
 
 
     protected $fillable = [

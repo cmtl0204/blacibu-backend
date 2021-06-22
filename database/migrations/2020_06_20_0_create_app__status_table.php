@@ -8,7 +8,7 @@ class CreateAppStatusTable extends Migration
 {
     public function up()
     {
-        Schema::connection(env('DB_CONNECTION_APP'))->create('status', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION'))->create('status', function (Blueprint $table) {
             $table->id();
 
             $table->string('code')
@@ -23,6 +23,6 @@ class CreateAppStatusTable extends Migration
 
     public function down()
     {
-        Schema::connection(env('DB_CONNECTION_APP'))->dropIfExists('status');
+        Schema::connection(env('DB_CONNECTION'))->dropIfExists('status');
     }
 }

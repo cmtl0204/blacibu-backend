@@ -14,8 +14,8 @@ class Email extends Model implements Auditable
     use Auditing;
     use SoftDeletes;
 
-    protected $connection = 'pgsql-app';
-    protected $table = 'app.emails';
+    // protected $connection = 'pgsql-app';
+    protected $table = 'emails';
 
     protected $fillable = [
         'to',

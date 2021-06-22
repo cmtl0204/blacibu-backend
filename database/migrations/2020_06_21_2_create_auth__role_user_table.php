@@ -11,11 +11,9 @@ class CreateAuthRoleUserTable extends Migration
         Schema::connection(env('DB_CONNECTION'))->create('role_user', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('user_id')
-                ->constrained('authentication.users');
+            $table->integer('user_id');
 
-            $table->foreignId('role_id')
-                ->constrained('authentication.roles');
+            $table->integer('role_id');
 
             $table->timestamps();
         });

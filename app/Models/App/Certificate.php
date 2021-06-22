@@ -20,8 +20,8 @@ class Certificate extends Model implements Auditable
 
     protected static $instance;
 
-    protected $connection = 'pgsql-app';
-    protected $table = 'app.certificates';
+    // protected $connection = 'pgsql-app';
+    protected $table = 'certificates';
 
     protected $fillable = [
         'modality',

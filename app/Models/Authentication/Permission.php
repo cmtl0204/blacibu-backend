@@ -20,8 +20,8 @@ class Permission extends Model implements Auditable
     use SoftDeletes;
     use Auditing;
 
-    protected $connection = 'pgsql-authentication';
-    protected $table = 'authentication.permissions';
+    // protected $connection = 'pgsql-authentication';
+    protected $table = 'permissions';
 
     protected $fillable = [
         'actions'

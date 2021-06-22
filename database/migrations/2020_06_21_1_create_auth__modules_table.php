@@ -12,11 +12,9 @@ class CreateAuthModulesTable extends Migration
             $table->id();
 
             $table->string('system_id')
-                ->constrained('authentication.systems')
                 ->comment('Para categorizar los modulos');
 
-            $table->foreignId('status_id')
-                ->constrained('app.catalogues');
+            $table->integer('status_id');
 
             $table->string('code')
                 ->comment('No debe ser modificado una vez que se lo crea');

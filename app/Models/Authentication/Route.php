@@ -27,8 +27,8 @@ class Route extends Model implements Auditable
     use Auditing;
     use SoftDeletes;
 
-    protected $connection = 'pgsql-authentication';
-    protected $table = 'authentication.routes';
+    // protected $connection = 'pgsql-authentication';
+    protected $table = 'routes';
 
     protected static $instance;
 

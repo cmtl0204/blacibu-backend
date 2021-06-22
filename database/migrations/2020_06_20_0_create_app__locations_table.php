@@ -8,16 +8,14 @@ class CreateAppLocationsTable extends Migration
 {
     public function up()
     {
-        Schema::connection(env('DB_CONNECTION_APP'))->create('locations', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION'))->create('locations', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('type_id')
-                ->nullable()
-                ->constrained('app.catalogues');
+            $table->integer('type_id')
+                ->nullable();
 
-            $table->foreignId('parent_id')
-                ->nullable()
-                ->constrained('app.locations');
+            $table->integer('parent_id')
+                ->nullable();
 
             $table->string('code');
 
@@ -57,6 +55,6 @@ class CreateAppLocationsTable extends Migration
 
     public function down()
     {
-        Schema::connection(env('DB_CONNECTION_APP'))->dropIfExists('locations');
+        Schema::connection(env('DB_CONNECTION'))->dropIfExists('locations');
     }
 }

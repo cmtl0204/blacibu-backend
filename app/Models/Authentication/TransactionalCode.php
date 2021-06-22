@@ -19,8 +19,8 @@ class TransactionalCode extends Model implements Auditable
     use HasFactory;
     use Auditing;
 
-    protected $connection = 'pgsql-authentication';
-    protected $table = 'authentication.transactional_codes';
+    // protected $connection = 'pgsql-authentication';
+    protected $table = 'transactional_codes';
 
     protected static $instance;
 

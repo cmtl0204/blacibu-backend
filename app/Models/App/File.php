@@ -24,8 +24,8 @@ class File extends Model implements Auditable
 
     protected static $instance;
 
-    protected $connection = 'pgsql-app';
-    protected $table = 'app.files';
+    // protected $connection = 'pgsql-app';
+    protected $table = 'files';
 
     protected $fillable = [
         'name',

@@ -11,17 +11,14 @@ class CreateAuthPermissionsTable extends Migration
         Schema::connection(env('DB_CONNECTION'))->create('permissions', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('route_id')
-                ->constrained('authentication.routes')
+            $table->integer('route_id')
                 ->comment('Ruta a la que va a tener acceso el permiso');
 
-            $table->foreignId('system_id')
-                ->constrained('authentication.systems')
+            $table->integer('system_id')
                 ->comment('Para que el permiso pertenezca a un sistema');
 
-            $table->foreignId('institution_id')
-                ->nullable()
-                ->constrained('app.institutions');
+            $table->integer('institution_id')
+                ->nullable();
 
             $table->string('name');
             $table->text('description')->nullable();

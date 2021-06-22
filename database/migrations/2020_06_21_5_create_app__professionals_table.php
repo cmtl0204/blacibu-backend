@@ -8,17 +8,15 @@ class CreateAppProfessionalsTable extends Migration
 {
     public function up()
     {
-        Schema::connection(env('DB_CONNECTION_APP'))->create('professionals', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION'))->create('professionals', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('user_id')
-                ->constrained('authentication.users');
+            $table->integer('user_id');
 
-            $table->foreignId('status_id')
-                ->nullable()
-                ->constrained('app.status');
+            $table->integer('status_id')
+                ->nullable();
 
-            $table->foreignId('country_id')
+            $table->integer('country_id')
                 ->nullable()
                 ->constrained('app.locations');
 
@@ -47,6 +45,6 @@ class CreateAppProfessionalsTable extends Migration
 
     public function down()
     {
-        Schema::connection(env('DB_CONNECTION_APP'))->dropIfExists('professionals');
+        Schema::connection(env('DB_CONNECTION'))->dropIfExists('professionals');
     }
 }

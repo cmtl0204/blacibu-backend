@@ -11,45 +11,36 @@ class CreateAuthUsersTable extends Migration
         Schema::connection(env('DB_CONNECTION'))->create('users', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('lang_id')
-                ->nullable()
-                ->constrained('app.catalogues');
+            $table->integer('lang_id')
+                ->nullable();
 
-            $table->foreignId('ethnic_origin_id')
-                ->nullable()
-                ->constrained('app.catalogues');
+            $table->integer('ethnic_origin_id')
+                ->nullable();
 
-            $table->foreignId('address_id')
+            $table->integer('address_id')
                 ->nullable()
                 ->constrained('app.address');
 
-            $table->foreignId('identification_type_id')
-                ->nullable()
-                ->constrained('app.catalogues');
+            $table->integer('identification_type_id')
+                ->nullable();
 
-            $table->foreignId('sex_id')
-                ->nullable()
-                ->constrained('app.catalogues');
+            $table->integer('sex_id')
+                ->nullable();
 
-            $table->foreignId('gender_id')
-                ->nullable()
-                ->constrained('app.catalogues');
+            $table->integer('gender_id')
+                ->nullable();
 
-            $table->foreignId('status_id')
-                ->nullable()
-                ->constrained('app.status');
+            $table->integer('status_id')
+                ->nullable();
 
-            $table->foreignId('blood_type_id')
-                ->nullable()
-                ->constrained('app.catalogues');
+            $table->integer('blood_type_id')
+                ->nullable();
 
-            $table->foreignId('civil_status_id')
-                ->nullable()
-                ->constrained('app.catalogues');
+            $table->integer('civil_status_id')
+                ->nullable();
 
-            $table->foreignId('title_id')
-                ->nullable()
-                ->constrained('app.catalogues');
+            $table->integer('title_id')
+                ->nullable();
 
             $table->string('avatar')
                 ->nullable()

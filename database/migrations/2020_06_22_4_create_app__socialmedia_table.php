@@ -8,7 +8,7 @@ class CreateAppSocialmediaTable extends Migration
 {
     public function up()
     {
-        Schema::connection(env('DB_CONNECTION_APP'))->create('socialmedia', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION'))->create('socialmedia', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('icon')->nullable();
@@ -20,6 +20,6 @@ class CreateAppSocialmediaTable extends Migration
 
     public function down()
     {
-        Schema::connection(env('DB_CONNECTION_APP'))->dropIfExists('socialmedia');
+        Schema::connection(env('DB_CONNECTION'))->dropIfExists('socialmedia');
     }
 }

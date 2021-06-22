@@ -16,8 +16,8 @@ class Status extends Model implements Auditable
 
     private static $instance;
 
-    protected $connection = 'pgsql-app';
-    protected $table = 'app.status';
+    // protected $connection = 'pgsql-app';
+    protected $table = 'status';
 
     protected $fillable = ['code', 'name'];
 

@@ -8,20 +8,20 @@ class CreateAppCertificatesTable extends Migration
 {
     public function up()
     {
-        Schema::connection(env('DB_CONNECTION_APP'))->create('certificates', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION'))->create('certificates', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('professional_id')
+            $table->integer('professional_id')
                 ->nullable()
                 ->constrained('app.professionals');
 
-            $table->foreignId('status_id')
+            $table->integer('status_id')
                 ->nullable()
-                ->constrained('app.status');
+                ;
 
-            $table->foreignId('type_id')
+            $table->integer('type_id')
                 ->nullable()
-                ->constrained('app.catalogues');
+                ;
 
             $table->string('modality')
                 ->nullable();
@@ -57,6 +57,6 @@ class CreateAppCertificatesTable extends Migration
 
     public function down()
     {
-        Schema::connection(env('DB_CONNECTION_APP'))->dropIfExists('certificates');
+        Schema::connection(env('DB_CONNECTION'))->dropIfExists('certificates');
     }
 }

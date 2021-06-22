@@ -8,12 +8,11 @@ class CreateAppInstitutionsTable extends Migration
 {
     public function up()
     {
-        Schema::connection(env('DB_CONNECTION_APP'))->create('institutions', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION'))->create('institutions', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('address_id')
-                ->nullable()
-                ->constrained('app.address');
+            $table->integer('address_id')
+                ->nullable();
 
             $table->string('code')
                 ->comment('Generado automaticamente por el acronym y el id ej: abc1');
@@ -50,6 +49,6 @@ class CreateAppInstitutionsTable extends Migration
 
     public function down()
     {
-        Schema::connection(env('DB_CONNECTION_APP'))->dropIfExists('institutions');
+        Schema::connection(env('DB_CONNECTION'))->dropIfExists('institutions');
     }
 }
