@@ -8,7 +8,7 @@ class CreateAppAddressTable extends Migration
 {
     public function up()
     {
-        Schema::connection('pgsql-app')->create('address', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION_APP'))->create('address', function (Blueprint $table) {
             $table->id();
 
             $table->foreignId('location_id')
@@ -43,7 +43,7 @@ class CreateAppAddressTable extends Migration
 
     public function down()
     {
-        Schema::connection('pgsql-app')->dropIfExists('address');
+        Schema::connection(env('DB_CONNECTION_APP'))->dropIfExists('address');
     }
 
 }

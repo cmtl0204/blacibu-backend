@@ -8,7 +8,7 @@ class CreateAuthTransactionalCodesTable extends Migration
 {
     public function up()
     {
-        Schema::connection('pgsql-authentication')->create('transactional_codes', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION'))->create('transactional_codes', function (Blueprint $table) {
             $table->id();
 
             $table->string('username');
@@ -25,6 +25,6 @@ class CreateAuthTransactionalCodesTable extends Migration
 
     public function down()
     {
-        Schema::connection('pgsql-authentication')->dropIfExists('transactional_codes');
+        Schema::connection(env('DB_CONNECTION'))->dropIfExists('transactional_codes');
     }
 }

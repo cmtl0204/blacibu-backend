@@ -8,7 +8,7 @@ class CreateAuthModulesTable extends Migration
 {
     public function up()
     {
-        Schema::connection('pgsql-authentication')->create('modules', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION'))->create('modules', function (Blueprint $table) {
             $table->id();
 
             $table->string('system_id')
@@ -37,6 +37,6 @@ class CreateAuthModulesTable extends Migration
 
     public function down()
     {
-        Schema::connection('pgsql-authentication')->dropIfExists('modules');
+        Schema::connection(env('DB_CONNECTION'))->dropIfExists('modules');
     }
 }

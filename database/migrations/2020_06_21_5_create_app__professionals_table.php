@@ -8,7 +8,7 @@ class CreateAppProfessionalsTable extends Migration
 {
     public function up()
     {
-        Schema::connection('pgsql-app')->create('professionals', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION_APP'))->create('professionals', function (Blueprint $table) {
             $table->id();
 
             $table->foreignId('user_id')
@@ -47,6 +47,6 @@ class CreateAppProfessionalsTable extends Migration
 
     public function down()
     {
-        Schema::connection('pgsql-app')->dropIfExists('professionals');
+        Schema::connection(env('DB_CONNECTION_APP'))->dropIfExists('professionals');
     }
 }

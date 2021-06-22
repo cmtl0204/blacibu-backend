@@ -54,7 +54,7 @@ return [
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
             'prefix_indexes' => true,
-            'schema' => env('DB_SCHEMA_AUTHENTICATION', 'public'),
+            'schema' => env('DB_SCHEMA_1', 'public'),
             'strict' => true,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([

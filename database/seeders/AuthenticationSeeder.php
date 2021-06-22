@@ -89,10 +89,10 @@ class AuthenticationSeeder extends Seeder
         $statysAvailable = Status::firstWhere('code', $catalogues['status']['available']);
         System::factory()->create([
             'code' => $catalogues['system']['code'],
-            'name' => 'Sistema de Cirugia y Traumatologia Bucomaxilofacial',
+            'name' => 'Sistema de Cirugía y Traumatología Bucomaxilofacial',
             'acronym' => 'BLACIBU',
             'version' => '1.2.3',
-            'redirect' => 'http://pruebas.blacibu.yavirac.edu.ec/',
+            'redirect' => 'http://pruebas.blacibu.yavirac.edu.ec/#/',
             'date' => '2021-03-10',
             'status_id' => $statysAvailable->id
         ]);

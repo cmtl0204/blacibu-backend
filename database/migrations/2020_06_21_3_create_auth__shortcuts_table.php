@@ -8,7 +8,7 @@ class CreateAuthShortcutsTable extends Migration
 {
     public function up()
     {
-        Schema::connection('pgsql-authentication')->create('shortcuts', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION'))->create('shortcuts', function (Blueprint $table) {
             $table->id();
 
             $table->foreignId('user_id')
@@ -35,6 +35,6 @@ class CreateAuthShortcutsTable extends Migration
 
     public function down()
     {
-        Schema::connection('pgsql-authentication')->dropIfExists('shortcuts');
+        Schema::connection(env('DB_CONNECTION'))->dropIfExists('shortcuts');
     }
 }

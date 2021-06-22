@@ -8,7 +8,7 @@ class CreateAuthRoutesTable extends Migration
 {
     public function up()
     {
-        Schema::connection('pgsql-authentication')->create('routes', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION'))->create('routes', function (Blueprint $table) {
             $table->id();
 
             $table->foreignId('parent_id')->nullable()
@@ -56,6 +56,6 @@ class CreateAuthRoutesTable extends Migration
 
     public function down()
     {
-        Schema::connection('pgsql-authentication')->dropIfExists('routes');
+        Schema::connection(env('DB_CONNECTION'))->dropIfExists('routes');
     }
 }

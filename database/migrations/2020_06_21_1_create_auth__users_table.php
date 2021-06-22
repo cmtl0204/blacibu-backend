@@ -8,7 +8,7 @@ class CreateAuthUsersTable extends Migration
 {
     public function up()
     {
-        Schema::connection('pgsql-authentication')->create('users', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION'))->create('users', function (Blueprint $table) {
             $table->id();
 
             $table->foreignId('lang_id')
@@ -101,6 +101,6 @@ class CreateAuthUsersTable extends Migration
 
     public function down()
     {
-        Schema::connection('pgsql-authentication')->dropIfExists('users');
+        Schema::connection(env('DB_CONNECTION'))->dropIfExists('users');
     }
 }

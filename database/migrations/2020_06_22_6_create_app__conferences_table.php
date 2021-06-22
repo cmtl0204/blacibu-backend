@@ -8,7 +8,7 @@ class CreateAppConferencesTable extends Migration
 {
     public function up()
     {
-        Schema::connection('pgsql-app')->create('conferences', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION_APP'))->create('conferences', function (Blueprint $table) {
             $table->id();
 
             $table->foreignId('professional_id')
@@ -60,6 +60,6 @@ class CreateAppConferencesTable extends Migration
 
     public function down()
     {
-        Schema::connection('pgsql-app')->dropIfExists('conferences');
+        Schema::connection(env('DB_CONNECTION_APP'))->dropIfExists('conferences');
     }
 }

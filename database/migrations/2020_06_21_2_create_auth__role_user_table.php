@@ -8,7 +8,7 @@ class CreateAuthRoleUserTable extends Migration
 {
     public function up()
     {
-        Schema::connection('pgsql-authentication')->create('role_user', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION'))->create('role_user', function (Blueprint $table) {
             $table->id();
 
             $table->foreignId('user_id')
@@ -23,6 +23,6 @@ class CreateAuthRoleUserTable extends Migration
 
     public function down()
     {
-        Schema::connection('pgsql-authentication')->dropIfExists('role_user');
+        Schema::connection(env('DB_CONNECTION'))->dropIfExists('role_user');
     }
 }

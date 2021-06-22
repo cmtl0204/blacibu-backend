@@ -8,7 +8,7 @@ class CreateAuthFailedJobsTable extends Migration
 {
     public function up()
     {
-        Schema::connection('pgsql-authentication')->create('failed_jobs', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION'))->create('failed_jobs', function (Blueprint $table) {
             $table->id();
             $table->string('uuid')->unique();
             $table->text('connection');
@@ -21,6 +21,6 @@ class CreateAuthFailedJobsTable extends Migration
 
     public function down()
     {
-        Schema::connection('pgsql-authentication')->dropIfExists('failed_jobs');
+        Schema::connection(env('DB_CONNECTION'))->dropIfExists('failed_jobs');
     }
 }

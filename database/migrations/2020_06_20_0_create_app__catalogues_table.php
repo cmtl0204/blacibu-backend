@@ -8,12 +8,13 @@ class CreateAppCataloguesTable extends Migration
 {
     public function up()
     {
-        Schema::connection('pgsql-app')->create('catalogues', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION_APP'))->create('catalogues', function (Blueprint $table) {
             $table->id();
 
             $table->foreignId('parent_id')
                 ->nullable()
-                ->comment('Un catalogo puede tener catalogos hijos')->constrained('app.catalogues');
+                ->comment('Un catalogo puede tener catalogos hijos')
+                ->constrained('app.catalogues');
 
             $table->string('code')
                 ->comment('No debe ser modificado una vez que se lo crea');
@@ -41,6 +42,6 @@ class CreateAppCataloguesTable extends Migration
 
     public function down()
     {
-        Schema::connection('pgsql-app')->dropIfExists('catalogues');
+        Schema::connection(env('DB_CONNECTION_APP'))->dropIfExists('catalogues');
     }
 }

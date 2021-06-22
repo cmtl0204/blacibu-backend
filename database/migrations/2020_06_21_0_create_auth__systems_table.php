@@ -8,7 +8,7 @@ class CreateAuthSystemsTable extends Migration
 {
     public function up()
     {
-        Schema::connection('pgsql-authentication')->create('systems', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION'))->create('systems', function (Blueprint $table) {
             $table->id();
 
             $table->string('code')
@@ -44,6 +44,6 @@ class CreateAuthSystemsTable extends Migration
 
     public function down()
     {
-        Schema::connection('pgsql-authentication')->dropIfExists('systems');
+        Schema::connection(env('DB_CONNECTION'))->dropIfExists('systems');
     }
 }

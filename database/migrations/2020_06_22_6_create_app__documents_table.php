@@ -8,7 +8,7 @@ class CreateAppDocumentsTable extends Migration
 {
     public function up()
     {
-        Schema::connection('pgsql-app')->create('documents', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION_APP'))->create('documents', function (Blueprint $table) {
             $table->id();
 
             $table->foreignId('professional_id')
@@ -35,6 +35,6 @@ class CreateAppDocumentsTable extends Migration
 
     public function down()
     {
-        Schema::connection('pgsql-app')->dropIfExists('documents');
+        Schema::connection(env('DB_CONNECTION_APP'))->dropIfExists('documents');
     }
 }

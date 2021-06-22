@@ -8,7 +8,7 @@ class CreateAppLocationsTable extends Migration
 {
     public function up()
     {
-        Schema::connection('pgsql-app')->create('locations', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION_APP'))->create('locations', function (Blueprint $table) {
             $table->id();
 
             $table->foreignId('type_id')
@@ -57,6 +57,6 @@ class CreateAppLocationsTable extends Migration
 
     public function down()
     {
-        Schema::connection('pgsql-app')->dropIfExists('locations');
+        Schema::connection(env('DB_CONNECTION_APP'))->dropIfExists('locations');
     }
 }

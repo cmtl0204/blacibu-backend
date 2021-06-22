@@ -9,7 +9,7 @@ class CreateAppStatusablesTable extends Migration
 
     public function up()
     {
-        Schema::connection('pgsql-app')->create('statusables', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION_APP'))->create('statusables', function (Blueprint $table) {
             $table->id();
 
             $table->foreignId('status_id')
@@ -23,6 +23,6 @@ class CreateAppStatusablesTable extends Migration
 
     public function down()
     {
-        Schema::connection('pgsql-app')->dropIfExists('statusables');
+        Schema::connection(env('DB_CONNECTION_APP'))->dropIfExists('statusables');
     }
 }

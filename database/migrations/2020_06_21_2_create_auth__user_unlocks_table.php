@@ -8,7 +8,7 @@ class CreateAuthUserUnlocksTable extends Migration
 {
     public function up()
     {
-        Schema::connection('pgsql-authentication')->create('user_unlocks', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION'))->create('user_unlocks', function (Blueprint $table) {
             $table->id();
 
             $table->string('username');
@@ -25,6 +25,6 @@ class CreateAuthUserUnlocksTable extends Migration
 
     public function down()
     {
-        Schema::connection('pgsql-authentication')->dropIfExists('user_unlocks');
+        Schema::connection(env('DB_CONNECTION'))->dropIfExists('user_unlocks');
     }
 }

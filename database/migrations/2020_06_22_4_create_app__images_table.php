@@ -8,7 +8,7 @@ class CreateAppImagesTable extends Migration
 {
     public function up()
     {
-        Schema::connection('pgsql-app')->create('images', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION_APP'))->create('images', function (Blueprint $table) {
             $table->id();
             $table->morphs('imageable');
             $table->string('name');
@@ -22,6 +22,6 @@ class CreateAppImagesTable extends Migration
 
     public function down()
     {
-        Schema::connection('pgsql-app')->dropIfExists('images');
+        Schema::connection(env('DB_CONNECTION_APP'))->dropIfExists('images');
     }
 }

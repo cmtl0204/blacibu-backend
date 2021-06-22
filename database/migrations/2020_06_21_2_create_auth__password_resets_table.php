@@ -8,7 +8,7 @@ class CreateAuthPasswordResetsTable extends Migration
 {
     public function up()
     {
-        Schema::connection('pgsql-authentication')->create('password_resets', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION'))->create('password_resets', function (Blueprint $table) {
             $table->id();
 
             $table->string('username');
@@ -25,6 +25,6 @@ class CreateAuthPasswordResetsTable extends Migration
 
     public function down()
     {
-        Schema::connection('pgsql-authentication')->dropIfExists('password_resets');
+        Schema::connection(env('DB_CONNECTION'))->dropIfExists('password_resets');
     }
 }

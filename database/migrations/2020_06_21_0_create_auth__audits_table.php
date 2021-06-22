@@ -8,7 +8,7 @@ class CreateAuthAuditsTable extends Migration
 {
     public function up()
     {
-        Schema::connection('pgsql-authentication')->create('audits', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION'))->create('audits', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('user_type')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
@@ -28,6 +28,6 @@ class CreateAuthAuditsTable extends Migration
 
     public function down()
     {
-        Schema::connection('pgsql-authentication')->drop('audits');
+        Schema::connection(env('DB_CONNECTION'))->drop('audits');
     }
 }

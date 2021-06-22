@@ -8,7 +8,7 @@ class CreateAuthPermissionUserTable extends Migration
 {
     public function up()
     {
-        Schema::connection('pgsql-authentication')->create('permission_user', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION'))->create('permission_user', function (Blueprint $table) {
             $table->id();
 
             $table->foreignId('user_id')
@@ -23,6 +23,6 @@ class CreateAuthPermissionUserTable extends Migration
 
     public function down()
     {
-        Schema::connection('pgsql-authentication')->dropIfExists('permission_user');
+        Schema::connection(env('DB_CONNECTION'))->dropIfExists('permission_user');
     }
 }

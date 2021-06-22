@@ -8,7 +8,7 @@ class CreateAuthSecurityQuestionsTable extends Migration
 {
     public function up()
     {
-        Schema::connection('pgsql-authentication')->create('security_questions', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION'))->create('security_questions', function (Blueprint $table) {
             $table->id();
 
             $table->string('name');
@@ -20,6 +20,6 @@ class CreateAuthSecurityQuestionsTable extends Migration
 
     public function down()
     {
-        Schema::connection('pgsql-authentication')->dropIfExists('security_questions');
+        Schema::connection(env('DB_CONNECTION'))->dropIfExists('security_questions');
     }
 }

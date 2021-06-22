@@ -8,7 +8,7 @@ class CreateAuthUserSecurityQuestionTable extends Migration
 {
     public function up()
     {
-        Schema::connection('pgsql-authentication')->create('user_security_questions', function (Blueprint $table) {
+        Schema::connection(env('DB_CONNECTION'))->create('user_security_questions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('authentication.users');
             $table->foreignId('security_question_id')->constrained('authentication.security_questions');
@@ -19,6 +19,6 @@ class CreateAuthUserSecurityQuestionTable extends Migration
 
     public function down()
     {
-        Schema::connection('pgsql-authentication')->dropIfExists('permission_role');
+        Schema::connection(env('DB_CONNECTION'))->dropIfExists('permission_role');
     }
 }
