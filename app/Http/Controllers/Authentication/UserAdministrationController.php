@@ -8,6 +8,8 @@ use App\Http\Requests\Authentication\Auth\AuthResetPasswordRequest;
 use App\Http\Requests\Authentication\User\UserCreateRequest;
 use App\Http\Requests\Authentication\UserAdministration\UserAdminIndexRequest;
 use App\Http\Requests\Authentication\UserRequest;
+use App\Mail\App\ProfessionalApproveMailable;
+use App\Mail\App\ProfessionalRejectMailable;
 use App\Mail\Authentication\EmailVerifiedMailable;
 use App\Mail\Authentication\UserCreationMailable;
 use App\Models\App\Certificate;
@@ -152,6 +154,25 @@ class  UserAdministrationController extends Controller
         $professional->status()->associate($status);
         $professional->observation = null;
         $professional->save();
+        $user = User::find($professional->user->id);
+        $this->emailProfessionalApprove($user);
+        return response()->json([
+            'data' => $professional,
+            'msg' => [
+                'summary' => 'APROBADO',
+                'detail' => '',
+                'code' => '200'
+            ]
+        ], 200);
+    }
+
+    public function checkProfessional(Request $request)
+    {
+        $status = Status::where('code', 'REVIEWED')->first();
+        $professional = Professional::find($request->input('professional_id'));
+        $professional->status()->associate($status);
+        $professional->observation = null;
+        $professional->save();
         return response()->json([
             'data' => $professional,
             'msg' => [
@@ -204,6 +225,8 @@ class  UserAdministrationController extends Controller
         $professional->status()->associate($status);
         $professional->observation = $request->input('observation');
         $professional->save();
+        $user = User::find($professional->user->id);
+        $this->emailProfessionalReject($user);
         return response()->json([
             'data' => $professional,
             'msg' => [
@@ -387,7 +410,7 @@ class  UserAdministrationController extends Controller
         }
 
         $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
-        $role = Role::where('code', 'ADMIN')->first();
+        $role = Role::where('code', $request->input('user.role'))->first();
         $status = Status::firstWhere('code', $catalogues['status']['active']);
         $passwordGenerated = Str::random(8);
 
@@ -447,6 +470,7 @@ class  UserAdministrationController extends Controller
             ], 400);
         }
 
+        $role = Role::where('code', $request->input('user.role'))->first();
 
         $user->username = $request->input('user.username');
         $user->identification = $request->input('user.username');
@@ -454,7 +478,7 @@ class  UserAdministrationController extends Controller
         $user->lastname = $request->input('user.lastname');
         $user->email = $request->input('user.email');
         $user->save();
-
+        $user->roles()->sync($role);
 
         return response()->json([
             'data' => $user,
@@ -526,6 +550,17 @@ class  UserAdministrationController extends Controller
             $j = 1;
         }
 
+        if ($role->code === 'REVIEWER') {
+            $shortcut = new Shortcut();
+            $shortcut->name = $permissions[1]->route['name'];
+            $shortcut->image = "routes/route2.png";
+            $shortcut->user()->associate($user);
+            $shortcut->role()->associate($role);
+            $shortcut->permission()->associate($permissions[1]);
+            $shortcut->save();
+            return;
+        }
+
         if ($role->code === 'CERTIFIED') {
             $j = 5;
         }
@@ -571,5 +606,17 @@ class  UserAdministrationController extends Controller
                 json_encode(['user' => $user, 'password' => $password]),
                 $systemId
             ));
+    }
+
+    private function emailProfessionalApprove($user)
+    {
+        Mail::to($user->email)
+            ->send(new ProfessionalApproveMailable(json_encode(['user' => $user])));
+    }
+
+    private function emailProfessionalReject($user)
+    {
+        Mail::to($user->email)
+            ->send(new ProfessionalRejectMailable(json_encode(['user' => $user])));
     }
 }

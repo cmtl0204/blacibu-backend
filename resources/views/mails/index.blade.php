@@ -16,7 +16,7 @@
 <div class="content">
     <div class="row">
         <div class="col-6 offset-2 border">
-            <h5 class="text-center bg-secondary text-white">{{$system->name}}</h5>
+            <h5 class="text-center bg-secondary text-white">Asociación latinoamericana de cirugía y traumatología bucomaxilofacial</h5>
             <p class="text-muted">
                 Fecha: <b>{{\Carbon\Carbon::now()->toDateString()}}</b>
                 <b class="ml-2">{{\Carbon\Carbon::now()->toTimeString()}}</b>
@@ -31,7 +31,7 @@
                 <div class="col-12">
                     <footer class="text-muted">
                         <p>Saludos cordiales</p>
-                        <p><b>{{$system->name}}</b></p>
+                        <p><b>Asociación latinoamericana de cirugía y traumatología bucomaxilofacial</b></p>
                         <hr size="3">
                         <small><b>Nota de descargo:</b></small>
                         <small>La información contenida en este correo electrónico es confidencial y solo puede ser

@@ -40,6 +40,8 @@ Route::group(['prefix' => 'professionals'], function () {
     Route::get('payments', [ProfessionalController::class, 'getPayments']);
     Route::post('payments/file', [ProfessionalController::class, 'uploadPaymentsFiles']);
     Route::put('payments/update', [ProfessionalController::class, 'updatePayment']);
+    Route::patch('send-request/{professional}', [ProfessionalController::class, 'sendRequest']);
+    Route::patch('verify-request/{professional}', [ProfessionalController::class, 'verifyRequest']);
 });
 
 Route::group(['prefix' => 'documents'], function () {

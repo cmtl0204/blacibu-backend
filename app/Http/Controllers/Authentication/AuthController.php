@@ -70,7 +70,7 @@ class  AuthController extends Controller
         $lang = Catalogue::find($request->input('register.lang.id'));
         $identificationType = Catalogue::find($request->input('register.identification_type.id'));
         $country = Location::find($request->input('register.country.id'));
-        $statusProfessional = Status::firstWhere('code', $catalogues['status']['in_revision']);
+        $statusProfessional = Status::firstWhere('code', $catalogues['status']['request_not_sent']);
 
         $user = new User();
         $user->username = $request->input('register.username');
@@ -106,7 +106,7 @@ class  AuthController extends Controller
         ], 201);
     }
 
-    function handleProviderCallback($driver)
+    function handleProviderCallback(Request $request,$driver)
     {
         $userSocialite = Socialite::driver($driver)->stateless()->user();
         $user = User::firstWhere('email', $userSocialite->getEmail());
@@ -123,7 +123,7 @@ class  AuthController extends Controller
         }
 
 //        $url = "http://localhost:4200/#/auth/unregistered-user?email={$userSocialite->getEmail()}"
-        $url = $system->redirect."auth/register?email={$userSocialite->getEmail()}"
+        $url = $system->redirect."/auth/register?email={$userSocialite->getEmail()}"
             . "&given_name={$userSocialite->user['given_name']}" .
             "&family_name={$userSocialite->user['family_name']}";
 

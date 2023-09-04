@@ -4,14 +4,17 @@ namespace App\Http\Controllers\App;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\App\File\UploadFileRequest;
+use App\Mail\App\ProfessionalSentRequestMailable;
 use App\Models\App\Address;
 use App\Models\App\Catalogue;
 use App\Models\App\File;
 use App\Models\App\Location;
 use App\Models\App\Payment;
+use App\Models\App\Professional;
 use App\Models\App\Status;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Authentication\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class ProfessionalController extends Controller
@@ -162,4 +165,42 @@ class ProfessionalController extends Controller
                 'code' => '201'
             ]], 201);
     }
+
+    function sendRequest(Professional $professional)
+    {
+        $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
+        $statusProfessional = Status::firstWhere('code', $catalogues['status']['in_revision']);
+        $professional->status()->associate($statusProfessional);
+        $professional->save();
+        $user = User::find($professional->user->id);
+        $this->emailSendRequest($user);
+        return response()->json([
+            'data' => $professional,
+            'msg' => [
+                'summary' => 'Envio de solicitud de Documentos',
+                'detail' => 'Por favor revise su correo electrónico',
+                'code' => '201'
+            ]
+        ], 201);
+    }
+
+    function verifyRequest(Professional $professional)
+    {
+        $professional = Professional::where('id', $professional->id)->with('status')->first();
+        return response()->json([
+            'data' => $professional,
+            'msg' => [
+                'summary' => 'Estado de Solicitud',
+                'detail' => $professional->status->name,
+                'code' => '201'
+            ]
+        ], 201);
+    }
+
+    private function emailSendRequest($user)
+    {
+        Mail::to($user->email)
+            ->send(new ProfessionalSentRequestMailable(json_encode(['user' => $user])));
+    }
 }
+

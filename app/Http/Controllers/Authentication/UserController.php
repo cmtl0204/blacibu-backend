@@ -29,6 +29,9 @@ class  UserController extends Controller
             ->with('lang')
             ->with('bloodType')
             ->with('roles')
+            ->with(['professional' => function ($professional) {
+                $professional->with('status');
+            }])
             ->where('username', $username)
             ->first();
 

@@ -1,11 +1,12 @@
-@extends('pages.index')
+@extends('mails.index')
 @section('content')
     <div class="row">
         <div class="col-12 text-muted ">
-            <h3 class="text-center text-success">Correo Electrónico Verificado</h3>
+            <h3 class="text-center">Documentos Rechazados</h3>
             <br>
-            <p>Gracias por registrarse en <strong>{{$system->name}}  ({{$system->acronym}})</strong> </p>
-            <p>Para empezar a utilizar nuestro sistema, debe hacer click en el siguiente enlace:</p>
+            <p>Por medio de la presente, lamentamos informarle que sus documentos han sido rechzados.</p>
+
+            <p>Para poder ingresar al sistema por favor haga click en el siguiente enlace y verifique sus documentos:</p>
             <div class=" text-center">
                 <a class="btn btn-primary text-center"
                    href="{{$system->redirect}}/auth/login">

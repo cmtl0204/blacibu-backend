@@ -18,22 +18,11 @@ class Document extends Model implements Auditable
     use SoftDeletes;
     use CascadeSoftDeletes;
 
-    protected static $instance;
-
     protected $connection = 'pgsql-app';
     protected $table = 'app.documents';
 
-    protected $fillable = ['aditional_information'];
+    protected $fillable = ['additional_information'];
     protected $cascadeDeletes = ['file'];
-    // Instance
-    public static function getInstance($id)
-    {
-        if (is_null(static::$instance)) {
-            static::$instance = new static;
-        }
-        static::$instance->id = $id;
-        return static::$instance;
-    }
 
     // Relationsships
     public function professional()

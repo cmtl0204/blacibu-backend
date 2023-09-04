@@ -11,7 +11,7 @@
             <br>
             <div class=" text-center">
                 <a class="btn btn-primary"
-                   href="{{ $system->redirect }}/#/auth/password-reset?token={{$data->token}}&username={{$data->user->username}}">
+                   href="{{ $system->redirect }}/auth/password-reset?token={{$data->token}}&username={{$data->user->username}}">
                     Restablecer Contraseña
                 </a>
             </div>
@@ -21,7 +21,7 @@
                 Si no puede acceder, copie la siguiente url:
             </p>
             <p class="text-muted">
-                {{$system->redirect}}/#/auth/password-reset?token={{$data->token}}&username={{$data->user->username}}
+                {{$system->redirect}}/auth/password-reset?token={{$data->token}}&username={{$data->user->username}}
             </p>
             <br>
             <p>Si no ha solicitado este servicio, repórtelo a su Institución.</p>

@@ -62,6 +62,7 @@ Route::prefix('user-admin')->group(function () {
     Route::get('professionals/certified-documents', [UserAdministrationController::class, 'getCertifiedDocuments']);
     Route::get('professionals/re-certified-documents', [UserAdministrationController::class, 'getReCertifiedDocuments']);
     Route::put('professionals/approve', [UserAdministrationController::class, 'approveProfessional']);
+    Route::put('professionals/check', [UserAdministrationController::class, 'checkProfessional']);
     Route::put('professionals/documents/approve', [UserAdministrationController::class, 'approveDocumentProfessional']);
     Route::put('professionals/reject', [UserAdministrationController::class, 'rejectProfessional']);
     Route::put('professionals/documents/reject', [UserAdministrationController::class, 'rejectDocumentProfessional']);
