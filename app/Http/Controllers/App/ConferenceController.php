@@ -52,7 +52,7 @@ class ConferenceController extends Controller
     {
         $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
         $conferenceData = json_decode($request->input('conference'));
-        $professional = $request->user();
+        $professional = $request->user()->professional()->first();
         $type = Catalogue::getInstance($request->input('type'));
         $status = Status::firstWhere('code', $catalogues['status']['in_revision']);
 

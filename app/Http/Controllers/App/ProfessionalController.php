@@ -127,7 +127,7 @@ class ProfessionalController extends Controller
         $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
         $status = Status::firstWhere('code', $catalogues['status']['in_revision']);
         $paymentData = json_decode($request->input('payment'));
-        $professional = $request->user();
+        $professional = $request->user()->professional()->first();
         if ($paymentData->file) {
             File::destroy($paymentData->file->id);
             Storage::delete($paymentData->file->full_path);

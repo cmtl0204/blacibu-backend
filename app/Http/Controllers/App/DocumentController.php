@@ -48,7 +48,7 @@ class DocumentController extends Controller
     function uploadFiles(UploadFileRequest $request)
     {
         $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
-        $professional = $request->user();
+        $professional = $request->user()->professional()->first();
         $type = Catalogue::find($request->input('type'));
         $status = Status::firstWhere('code', $catalogues['status']['in_revision']);
         $document = new Document();

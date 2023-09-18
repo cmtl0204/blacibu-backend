@@ -52,7 +52,7 @@ class CertificateController extends Controller
     {
         $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
         $certificateData = json_decode($request->input('certificate'));
-        $professional = $request->user();
+        $professional = $request->user()->professional()->first();
         $type = Catalogue::getInstance($request->input('type'));
         $status = Status::firstWhere('code', $catalogues['status']['in_revision']);
 
