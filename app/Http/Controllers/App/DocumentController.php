@@ -13,7 +13,6 @@ class DocumentController extends Controller
 {
     public function index(Request $request)
     {
-
         $professional = $request->user()->professional()->first();
 
         $documents = $professional->documents()->with(['type', 'file','status'])

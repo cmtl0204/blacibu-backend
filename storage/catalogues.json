@@ -8,7 +8,9 @@
         "maintenance": "503",
         "accepted": "ACCEPTED",
         "rejected": "REJECTED",
-        "in_revision": "IN_REVISION"
+        "in_revision": "IN_REVISION",
+        "reviewed": "REVIEWED",
+        "request_not_sent": "REQUEST_NOT_SENT"
     },
     "role": {
         "admin": "ADMIN",
@@ -154,7 +156,7 @@
             "type": "DOCUMENT"
         },
         "constancy": {
-            "type": "CONSTANCY"
+            "type": "RECORD"
         },
         "certificate": {
             "type": "CERTIFICATE"
