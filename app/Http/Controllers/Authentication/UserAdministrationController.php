@@ -387,22 +387,22 @@ class  UserAdministrationController extends Controller
 
     public function store(Request $request)
     {
-        if (User::where('username', $request->input('user.username'))->first()) {
+        if (User::where('username', $request->input('username'))->first()) {
             return response()->json([
                 'data' => null,
                 'msg' => [
-                    'summary' => 'Número de documento ya existe: ' . $request->input('user.username'),
+                    'summary' => 'Número de documento ya existe: ' . $request->input('username'),
                     'detail' => 'Por favor inicie sesión o ingrese otro número de documento',
                     'code' => '400'
                 ]
             ], 400);
         }
 
-        if (User::where('email', $request->input('user.email'))->first()) {
+        if (User::where('email', $request->input('email'))->first()) {
             return response()->json([
                 'data' => null,
                 'msg' => [
-                    'summary' => 'Correo electrónico ya existe: ' . $request->input('user.email'),
+                    'summary' => 'Correo electrónico ya existe: ' . $request->input('email'),
                     'detail' => 'Por favor inicie sesión o ingrese otro correo electrónico',
                     'code' => '400'
                 ]
@@ -410,16 +410,16 @@ class  UserAdministrationController extends Controller
         }
 
         $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
-        $role = Role::where('code', $request->input('user.role'))->first();
+        $role = Role::where('code', $request->input('role'))->first();
         $status = Status::firstWhere('code', $catalogues['status']['active']);
         $passwordGenerated = Str::random(8);
 
         $user = new User();
-        $user->username = $request->input('user.username');
-        $user->identification = $request->input('user.username');
-        $user->name = $request->input('user.name');
-        $user->lastname = $request->input('user.lastname');
-        $user->email = $request->input('user.email');
+        $user->username = $request->input('username');
+        $user->identification = $request->input('username');
+        $user->name = $request->input('name');
+        $user->lastname = $request->input('lastname');
+        $user->email = $request->input('email');
         $user->password = $passwordGenerated;
         $user->status()->associate($status);
 
@@ -448,35 +448,35 @@ class  UserAdministrationController extends Controller
     public function update(Request $request, $userId)
     {
         $user = User::with(['roles', 'status'])->find($userId);
-        if (User::where('id', '<>', $user->id)->where('username', $request->input('user.username'))->first()) {
+        if (User::where('id', '<>', $user->id)->where('username', $request->input('username'))->first()) {
             return response()->json([
                 'data' => null,
                 'msg' => [
-                    'summary' => 'Número de documento ya existe: ' . $request->input('user.username'),
+                    'summary' => 'Número de documento ya existe: ' . $request->input('username'),
                     'detail' => 'Por favor inicie sesión o ingrese otro número de documento',
                     'code' => '400'
                 ]
             ], 400);
         }
 
-        if (User::where('id', '<>', $user->id)->where('email', $request->input('user.email'))->first()) {
+        if (User::where('id', '<>', $user->id)->where('email', $request->input('email'))->first()) {
             return response()->json([
                 'data' => null,
                 'msg' => [
-                    'summary' => 'Correo electrónico ya existe: ' . $request->input('user.email'),
+                    'summary' => 'Correo electrónico ya existe: ' . $request->input('email'),
                     'detail' => 'Por favor inicie sesión o ingrese otro correo electrónico',
                     'code' => '400'
                 ]
             ], 400);
         }
 
-        $role = Role::where('code', $request->input('user.role'))->first();
+        $role = Role::where('code', $request->input('role'))->first();
 
-        $user->username = $request->input('user.username');
-        $user->identification = $request->input('user.username');
-        $user->name = $request->input('user.name');
-        $user->lastname = $request->input('user.lastname');
-        $user->email = $request->input('user.email');
+        $user->username = $request->input('username');
+        $user->identification = $request->input('username');
+        $user->name = $request->input('name');
+        $user->lastname = $request->input('lastname');
+        $user->email = $request->input('email');
         $user->save();
         $user->roles()->sync($role);
 
