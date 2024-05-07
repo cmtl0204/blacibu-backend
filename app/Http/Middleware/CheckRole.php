@@ -26,10 +26,8 @@ class CheckRole
                 'integer',
             ],
         ]);
-
         $role = $request->user()->roles()
             ->where('system_id', $request->system)
-            ->where('role_id', $request->role)
             ->first();
 
         if (!$role) {

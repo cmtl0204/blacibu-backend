@@ -410,9 +410,8 @@ class  UserAdministrationController extends Controller
         }
 
         $catalogues = json_decode(file_get_contents(storage_path() . "/catalogues.json"), true);
-        $role = Role::where('code', $request->input('role'))->first();
+        $role = Role::where('code', $request->input('role_code'))->first();
         $status = Status::firstWhere('code', $catalogues['status']['active']);
-        $passwordGenerated = Str::random(8);
 
         $user = new User();
         $user->username = $request->input('username');
@@ -420,20 +419,24 @@ class  UserAdministrationController extends Controller
         $user->name = $request->input('name');
         $user->lastname = $request->input('lastname');
         $user->email = $request->input('email');
-        $user->password = $passwordGenerated;
+        $user->password = $request->input('password');
         $user->status()->associate($status);
-
-        $professional = new Professional();
-
 //        DB::transaction(function () use ($user, $professional, $role) {
         $user->save();
         $user->markEmailAsVerified();
         $user->roles()->attach($role);
-        $professional->user()->associate($user);
-        $professional->save();
+
+        if ($request->input('role') === 'CERTIFIED' || $request->input('role') === 'RECERTIFIED') {
+            $professional = new Professional();
+            $professional->user()->associate($user);
+            $professional->save();
+        }
+
         $this->createShortcuts($user, $role);
 //        });
-        $this->emailUserCreation($user, $passwordGenerated, $role->system()->first()->id);
+
+        $this->emailUserCreation($user, $request->input('password'), $role->system()->first()->id);
+
         $user = User::where('id', $user->id)->with(['status', 'roles'])->first();
         return response()->json([
             'data' => $user,

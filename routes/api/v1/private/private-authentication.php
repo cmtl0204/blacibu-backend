@@ -19,13 +19,14 @@ Route::get('test', function (\Illuminate\Http\Request $request) {
     return "hola mundo";
 });
 // ApiResources
-Route::apiResource('user-admins', UserAdministrationController::class);
+//Route::apiResource('user-admins', UserAdministrationController::class);
 Route::apiResource('users', UserController::class);
 Route::apiResource('permissions', PermissionController::class);
 Route::apiResource('routes', RouteController::class);
 Route::apiResource('shortcuts', ShortcutController::class);
 Route::apiResource('roles', RoleController::class);
 Route::apiResource('systems', SystemController::class)->except('show');
+Route::post('user-admins', [UserAdministrationController::class, 'store']);
 
 // Auth
 Route::prefix('auth')->group(function () {
