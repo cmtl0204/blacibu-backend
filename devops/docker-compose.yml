@@ -1,0 +1,27 @@
+services:
+    php7.4:
+      build:
+        context: ..
+        dockerfile: devops/Dockerfile
+
+      container_name: laravel_php
+
+      working_dir: /var/www/html
+
+      volumes:
+        - ../:/var/www/html
+
+      ports:
+        - "8000:8000"
+
+      command: php artisan serve --host=0.0.0.0 --port=8000
+
+      restart: unless-stopped
+
+      networks:
+        - dev_network
+
+networks:
+  dev_network:
+    external: true
+
