@@ -1,7 +1,6 @@
 /.idea
 /.vscode
 /idea
-/public
 #/public/storage
 #/storage/*.key
 /storage/app/private/
